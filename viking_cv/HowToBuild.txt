@@ -1,6 +1,4 @@
-# 2015_VisionSystem
-
-How to Build:
+test change 
 
 If you have not done so already install the latest JDK and NetBeans 7.3.1 or later on a Windows computer
 
@@ -43,5 +41,11 @@ To run:
     In NetBeans, Ctrl-F5 starts the program using gdb as a remote debugger.
     On the Windows machine open a Chrome browser (IE won't work) and go to port 7777 on the BeagleBone (e.g. 192.168.1.19:7777)
     (Should see the annotated reduced-size frames from the camera)
+    
+    
+    
+
+    
+    
     
     
