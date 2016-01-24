@@ -154,12 +154,12 @@ bool CUpperGoalDetector::filterContoursLikeTowerTracker(
 // the height to the top of the target in first stronghold is 97 inches	
     static int TOP_TARGET_HEIGHT = 97;
 //	the physical height of the camera lens
-    static int TOP_CAMERA_HEIGHT = 32;
+    static int TOP_CAMERA_HEIGHT = 16;
 
 //	camera details, can usually be found on the datasheets of the camera
-    static double VERTICAL_FOV  = 51;
-    static double HORIZONTAL_FOV  = 67;
-    static double CAMERA_ANGLE = 10;    
+    static double VERTICAL_FOV  = 44;
+    static double HORIZONTAL_FOV  = 78;
+    static double CAMERA_ANGLE = 0;    
     
     static double PI = 3.14159265358979323846264;
     
