@@ -73,8 +73,12 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
     {
         static struct timespec timeLastCameraFrame = {0};
         static struct timespec timeNow = {0};
-        cv::Mat img_hsv, gray_blob, dstA, dstB;
+        cv::Mat img_hsv, goal_blob, dstA, dstB;
         static int iCount = 0;
+        
+        // 2016 filter values from Team 3019 - TowerTracker.java
+        cv::Scalar lowerBounds = cv::Scalar(58,0,109);
+	cv::Scalar upperBounds = cv::Scalar(93,255,240);
 
         int timeSinceLastCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
                 timeLastCameraFrame,
@@ -87,47 +91,27 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         // OpenCV has a handy conversion from RGB to HSV
         cv::cvtColor(pFrame->m_frame, img_hsv, CV_BGR2HSV);
 
-        // Filter out all but Gray hue
-        cv::inRange(img_hsv, cv::Scalar(10, 32, 96), cv::Scalar(30, 128, 160), gray_blob);
+        // Find the bright response from the rettro-reflective tape
+        cv::inRange(img_hsv, lowerBounds, upperBounds, goal_blob);
             
         iCount++;
         if ((iCount % 17) == 0)
         {
-            pFrameGrinder->m_testMonitor.saveFrameToJpeg(gray_blob);
+            pFrameGrinder->m_testMonitor.saveFrameToJpeg(goal_blob);
         }
 
 
         //Find the contours. Use the contourOutput Mat so the original image doesn't get overwritten
-        std::vector<std::vector<cv::Point> > grayContours;
-        cv::findContours(gray_blob, grayContours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-
+        std::vector<std::vector<cv::Point> > goalContours;
+        cv::findContours(goal_blob, goalContours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+        
         CUpperGoalRectangle bestupperGoalRectangle;
         float angleToBlueUpperGoalDegrees = 0.0;
         float offsetFromCenterlineToUpperGoalCenterUpperGoalFeet = 0.0;
         bool isUpperGoalFound = false;
-#ifdef DETECT_LARGEST_BLOB_NO_FILTER_BASED_ON_SIZE
-        isUpperGoalFound = filterContoursToFindLargestBlob(grayContours, bestupperGoalRectangle, angleToBlueUpperGoalDegrees, offsetFromCenterlineToUpperGoalCenterUpperGoalFeet);
-
-        isUpperGoalFound = true;
-#ifdef DISPLAY_CALIBRATION_INFO
-        printf("viking_cv version %d.%d.%d", VERSION_YEAR, VERSION_INTERFACE, VERSION_BUILD);
-        if (isUpperGoalFound)
-        {
-            printf("   NearFar_X: %d    LeftRight_Y: %d    Radius  %02f\r",
-                    (int) bestupperGoalRectangle.m_ptCenter.x,
-                    (int) bestupperGoalRectangle.m_ptCenter.y,
-                    bestupperGoalRectangle.m_radius);
-        }
-        else
-        {
-            printf("   Gray rectangle *NOT* found\r");
-        }
-#endif
-
-#else
-        isUpperGoalFound = filterContoursToFindUpperGoalBySize(grayContours, bestupperGoalRectangle, angleToBlueUpperGoalDegrees, offsetFromCenterlineToUpperGoalCenterUpperGoalFeet);
-#endif
-
+        isUpperGoalFound = filterContoursLikeTowerTracker(goalContours, pFrame->m_frame.rows, pFrame->m_frame.cols,
+                bestupperGoalRectangle, angleToBlueUpperGoalDegrees, offsetFromCenterlineToUpperGoalCenterUpperGoalFeet);
+       
         CTestMonitor::getTicks(&timeNow);
         int timeLatencyThisCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
                 pFrame->m_timeAddedToQueue[(int) CVideoFrame::FRAME_QUEUE_WAIT_FOR_BLOB_DETECT],
@@ -146,12 +130,40 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
     }
 }
 
-bool CUpperGoalDetector::filterContoursToFindLargestBlob(
-        const std::vector<std::vector<cv::Point> >& listContours,
+double CUpperGoalDetector::normalize360(double angle)
+{
+    while(angle >= 360.0)
+    {
+        angle -= 360.0;
+    }
+    while(angle < 0.0)
+    {
+        angle += 360.0;
+    }
+    return angle;
+}
+
+bool CUpperGoalDetector::filterContoursLikeTowerTracker(
+        std::vector<std::vector<cv::Point> >& listContours,
+        int originalMatHeight, int originalMatWidth,
         CUpperGoalRectangle& bestUpperGoalRectangle,
         float& angleToUpperGoalDegrees,
         float& distanceToUpperGoalFeet)
 {
+// Constants for known variables
+// the height to the top of the target in first stronghold is 97 inches	
+    static int TOP_TARGET_HEIGHT = 97;
+//	the physical height of the camera lens
+    static int TOP_CAMERA_HEIGHT = 32;
+
+//	camera details, can usually be found on the datasheets of the camera
+    static double VERTICAL_FOV  = 51;
+    static double HORIZONTAL_FOV  = 67;
+    static double CAMERA_ANGLE = 10;    
+    
+    static double PI = 3.14159265358979323846264;
+    
+    
     bool isUpperGoalFound = false;
     bestUpperGoalRectangle.init();
     angleToUpperGoalDegrees = -999.0;
@@ -163,26 +175,34 @@ bool CUpperGoalDetector::filterContoursToFindLargestBlob(
     cv::RotatedRect tempRect, vertRect, horizRect;
     std::vector<CUpperGoalRectangle> listPossibleUpperGoalRectangle;
     std::vector<cv::Point> contours_poly;
-    for (i = 0; i < listContours.size(); i++)
+    for (std::vector<std::vector<cv::Point> >::iterator iter = listContours.begin() ; iter != listContours.end(); ++iter)
     {
         tempRect = cv::minAreaRect(cv::Mat(listContours[i]));
-        area = tempRect.boundingRect().width * tempRect.boundingRect().height;
-        if ((area > 100.0) && (area < 400))
+        if(tempRect.size.height < 25 || tempRect.size.width < 25)
         {
-            // Test to see if width and height look like vertical (static) target
-            if (  (tempRect.boundingRect().width > (tempRect.boundingRect().height * 2.5))
-                || (tempRect.boundingRect().height > (tempRect.boundingRect().width * 2.5))  )
-            {
-                isUpperGoalFound = true;
-                bestUpperGoalRectangle.angle = tempRect.angle;
-                bestUpperGoalRectangle.center = tempRect.center;
-            }
+            listContours.erase(iter);
+            continue;
+        }
+        float aspect = (float)tempRect.size.width/(float)tempRect.size.height;
+        if(aspect < 1.0)
+        {
+            listContours.erase(iter);
+            continue;
         }
     }
-    if (isUpperGoalFound)
+    isUpperGoalFound = (listContours.size() == 1);
+    if(isUpperGoalFound)
     {
-        //angleToUpperGoalDegrees = m_lookupTable[(int) bestUpperGoalRectangle.m_ptCenter.x][(int) bestUpperGoalRectangle.m_ptCenter.y].angleToUpperGoalDegrees;
-        //distanceToUpperGoalFeet = m_lookupTable[(int) bestUpperGoalRectangle.m_ptCenter.x][(int) bestUpperGoalRectangle.m_ptCenter.y].distanceToUpperGoalFeet;
+        tempRect = cv::minAreaRect(cv::Mat(listContours[i]));
+        // "fun" math brought to you by miss daisy (team 341)!
+        int y = tempRect.boundingRect().br().y + tempRect.boundingRect().height / 2;
+        y= -((2 * (y / originalMatHeight)) - 1);
+        distanceToUpperGoalFeet = (TOP_TARGET_HEIGHT - TOP_CAMERA_HEIGHT) / 
+                        tan((y * VERTICAL_FOV / 2.0 + CAMERA_ANGLE) * PI / 180);
+        //				angle to target...would not rely on this
+        int targetX = tempRect.boundingRect().tl().x + tempRect.boundingRect().width / 2;
+        targetX = (2 * (targetX / originalMatWidth)) - 1;
+        angleToUpperGoalDegrees = normalize360(targetX*HORIZONTAL_FOV /2.0 + 0);
     }
     return isUpperGoalFound;
 }

@@ -89,11 +89,14 @@ private:
     CGpioLed m_gpioLed;
 
 private:
-    bool filterContoursToFindLargestBlob(
-            const std::vector<std::vector<cv::Point> >& listContours,
+    bool filterContoursLikeTowerTracker(
+            std::vector<std::vector<cv::Point> >& listContours,
+            int originalMatHeight, int originalMatWidth,
             CUpperGoalRectangle& bestUpperGoalRectangle,
             float& angleToUpperGoalDegrees,
             float& distanceToUpperGoalFeet);
+    
+    double normalize360(double angle);
 };
 
 #endif	/* CUPPERGOALDETECTOR_H */
