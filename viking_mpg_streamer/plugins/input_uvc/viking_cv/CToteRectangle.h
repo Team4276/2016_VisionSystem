@@ -31,13 +31,13 @@
 #ifndef CBALLCIRCLE_H
 #define	CBALLCIRCLE_H
 
-class CToteRectangle : public cv::RotatedRect
+class CUpperGoalRectangle : public cv::RotatedRect
 {
 public:
-    CToteRectangle();
-    virtual ~CToteRectangle();
-    CToteRectangle(const cv::RotatedRect& rect) : cv::RotatedRect(rect) {}
-    CToteRectangle& operator=(const cv::RotatedRect& rect);
+    CUpperGoalRectangle();
+    virtual ~CUpperGoalRectangle();
+    CUpperGoalRectangle(const cv::RotatedRect& rect) : cv::RotatedRect(rect) {}
+    CUpperGoalRectangle& operator=(const cv::RotatedRect& rect);
     
     void init();
     std::string displayText() const;

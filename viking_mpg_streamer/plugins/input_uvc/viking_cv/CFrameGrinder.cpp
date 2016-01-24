@@ -38,13 +38,13 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
-#include "CToteRectangle.h"
+#include "CUpperGoalRectangle.h"
 #include "CTargetInfo.h"
 #include "CVideoFrame.h"
 #include "CVideoFrameQueue.h"
 #include "CConnectionServer.h"
 #include "CGpioLed.h"
-#include "CToteDetector.h"
+#include "CUpperGoalDetector.h"
 #include "CTestMonitor.h"
 #include "CFrameGrinder.h"
 #include "dbgMsg.h"

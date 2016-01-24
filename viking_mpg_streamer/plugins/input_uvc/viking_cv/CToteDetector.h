@@ -34,7 +34,7 @@
 //#define DISPLAY_CALIBRATION_INFO
 #define DETECT_LARGEST_BLOB_NO_FILTER_BASED_ON_SIZE
 
-class CToteDetector
+class CUpperGoalDetector
 {
 public:
 
@@ -42,12 +42,12 @@ public:
     {
         float pixelRadius;
         float distanceToToteFeet;
-        float toteAngleDegrees;
+        float upperGoalAngleDegrees;
     } RADIUS_TABLE_ITEM;
 
-    CToteDetector();
-    CToteDetector(const CToteDetector& orig);
-    virtual ~CToteDetector();
+    CUpperGoalDetector();
+    CUpperGoalDetector(const CUpperGoalDetector& orig);
+    virtual ~CUpperGoalDetector();
 
     void init();
     void detectBlobs(CVideoFrame* pFrame, CFrameGrinder* pFrameGrinder);
@@ -60,10 +60,10 @@ private:
 private:
     bool filterContoursToFindLargestBlob(
             const std::vector<std::vector<cv::Point> >& listContours,
-            CToteRectangle& bestToteRectangle,
-            float& toteDirectionDegrees,
-            float& toteAngleDegrees,
-            float& distanceToToteCenterInches);
+            CUpperGoalRectangle& bestToteRectangle,
+            float& upperGoalDirectionDegrees,
+            float& upperGoalAngleDegrees,
+            float& distanceToGoalCenterInches);
 };
 
 #endif	/* CTOTEDETECTOR_H */

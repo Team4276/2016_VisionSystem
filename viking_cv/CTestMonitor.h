@@ -103,8 +103,8 @@ private:
     cv::VideoWriter m_outVideo;
 
     // Running totals for current test interval
-    unsigned int m_nIntervalisGrayToteFound;
-    CToteRectangle m_avgGrayToteRectangle;
+    unsigned int m_nIntervalisUpperGoalFound;
+    CUpperGoalRectangle m_avgUpperGoalRectangle;
     double m_avgElapsedSeconds[NUMBER_OF_TIME_IN_TASK];
     double m_avgTimeBetweenCameraFramesMilliseconds;
     double m_avgLatencyForProcessingFrameMilliseconds;

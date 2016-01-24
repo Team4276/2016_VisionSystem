@@ -43,8 +43,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/CMessageFromClient.o \
 	${OBJECTDIR}/CTargetInfo.o \
 	${OBJECTDIR}/CTestMonitor.o \
-	${OBJECTDIR}/CToteDetector.o \
-	${OBJECTDIR}/CToteRectangle.o \
+	${OBJECTDIR}/CUpperGoalDetector.o \
+	${OBJECTDIR}/CUpperGoalRectangle.o \
 	${OBJECTDIR}/CVideoFrame.o \
 	${OBJECTDIR}/CVideoFrameQueue.o \
 	${OBJECTDIR}/dbgMsg.o \
@@ -115,15 +115,15 @@ ${OBJECTDIR}/CTestMonitor.o: CTestMonitor.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -I../../../usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/CTestMonitor.o CTestMonitor.cpp
 
-${OBJECTDIR}/CToteDetector.o: CToteDetector.cpp 
+${OBJECTDIR}/CUpperGoalDetector.o: CUpperGoalDetector.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I../../../usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/CToteDetector.o CToteDetector.cpp
+	$(COMPILE.cc) -O2 -I../../../usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/CUpperGoalDetector.o CUpperGoalDetector.cpp
 
-${OBJECTDIR}/CToteRectangle.o: CToteRectangle.cpp 
+${OBJECTDIR}/CUpperGoalRectangle.o: CUpperGoalRectangle.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -I../../../usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/CToteRectangle.o CToteRectangle.cpp
+	$(COMPILE.cc) -O2 -I../../../usr/include -MMD -MP -MF $@.d -o ${OBJECTDIR}/CUpperGoalRectangle.o CUpperGoalRectangle.cpp
 
 ${OBJECTDIR}/CVideoFrame.o: CVideoFrame.cpp 
 	${MKDIR} -p ${OBJECTDIR}

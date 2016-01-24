@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include "opencv2/core/core.hpp"
 
-#include "CToteRectangle.h"
+#include "CUpperGoalRectangle.h"
 #include "CTargetInfo.h"
 
 CTargetInfo::CTargetInfo()
@@ -56,17 +56,17 @@ void CTargetInfo::init()
     m_targetInfoText = "";
     m_timeSinceLastCameraFrameMilliseconds = 0;
     m_timeLatencyThisCameraFrameMilliseconds = 0;
-    m_isGrayToteFound = 0;
-    m_angleFromStraightAheadToTote = 0.0;
-    m_offsetFromCenterlineToToteCenter = 0.0;
+    m_isUpperGoalFound = 0;
+    m_angleFromStraightAheadToUpperGoal = 0.0;
+    m_offsetFromCenterlineToUpperGoalCenter = 0.0;
 }
 
 void CTargetInfo::updateTargetInfo(
         int timeSinceLastCameraFrameMilliseconds,
         int timeLatencyThisCameraFrameMilliseconds,
-        bool isGrayToteFound,
-        float angleFromStraightAheadToTote,
-        float offsetFromCenterlineToToteCenter)
+        bool isUpperGoalFound,
+        float angleFromStraightAheadToUpperGoal,
+        float offsetFromCenterlineToUpperGoalCenter)
 {
     init();
 
@@ -74,17 +74,17 @@ void CTargetInfo::updateTargetInfo(
     m_timeLatencyThisCameraFrameMilliseconds = timeLatencyThisCameraFrameMilliseconds;
 
     // isFound() is needed for frame annotation,  even ifCV is not oriented)
-    m_isGrayToteFound = isGrayToteFound;
+    m_isUpperGoalFound = isUpperGoalFound;
 
-    if (isGrayToteFound)
+    if (isUpperGoalFound)
     {
-        m_angleFromStraightAheadToTote = angleFromStraightAheadToTote;
-        m_offsetFromCenterlineToToteCenter = offsetFromCenterlineToToteCenter;
+        m_angleFromStraightAheadToUpperGoal = angleFromStraightAheadToUpperGoal;
+        m_offsetFromCenterlineToUpperGoalCenter = offsetFromCenterlineToUpperGoalCenter;
     }
     else
     {
-        m_angleFromStraightAheadToTote = -999;
-        m_offsetFromCenterlineToToteCenter = 999;
+        m_angleFromStraightAheadToUpperGoal = -999;
+        m_offsetFromCenterlineToUpperGoalCenter = 999;
     }
 }
 
@@ -96,14 +96,14 @@ void CTargetInfo::initTargetInfoFromText(const std::string& targetInfoText)
 void CTargetInfo::initFormattedTextFromTargetInfo()
 {
     char buf[128];
-    int angleFromStraightAheadToTote = (int) (m_angleFromStraightAheadToTote * 10.0);
-    int offsetFromCenterlineToToteCenter = (int) (m_offsetFromCenterlineToToteCenter * 12.0);
+    int angleFromStraightAheadToUpperGoal = (int) (m_angleFromStraightAheadToUpperGoal * 10.0);
+    int offsetFromCenterlineToUpperGoalCenter = (int) (m_offsetFromCenterlineToUpperGoalCenter * 12.0);
     // Format text for transmission to the cRio
     sprintf(buf, "%d,%d,%d,%d,%d",
             m_timeSinceLastCameraFrameMilliseconds,
             m_timeLatencyThisCameraFrameMilliseconds,
-            m_isGrayToteFound,
-            angleFromStraightAheadToTote,
-            offsetFromCenterlineToToteCenter);
+            m_isUpperGoalFound,
+            angleFromStraightAheadToUpperGoal,
+            offsetFromCenterlineToUpperGoalCenter);
     m_targetInfoText = buf;
 }

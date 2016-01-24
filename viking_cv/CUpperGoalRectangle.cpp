@@ -33,25 +33,25 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
-#include "CToteRectangle.h"
+#include "CUpperGoalRectangle.h"
 
-CToteRectangle::CToteRectangle()
+CUpperGoalRectangle::CUpperGoalRectangle()
 {
     init();
 }
 
-CToteRectangle::~CToteRectangle()
+CUpperGoalRectangle::~CUpperGoalRectangle()
 {
 }
 
-void CToteRectangle::init()
+void CUpperGoalRectangle::init()
 {
     center = cv::Point2f(0, 0);
     angle = 0.0;
     size = cv::Size2f(0.0, 0.0);
 }
 
-std::string CToteRectangle::displayText() const
+std::string CUpperGoalRectangle::displayText() const
 {
     char buf[128];
     sprintf(buf, "C(%d, %d) A(%02f)", (int) center.x, (int) center.y, angle);

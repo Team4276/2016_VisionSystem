@@ -38,36 +38,36 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
-#include "CToteRectangle.h"
+#include "CUpperGoalRectangle.h"
 #include "CTargetInfo.h"
 #include "CVideoFrame.h"
 #include "CVideoFrameQueue.h"
 #include "CConnectionServer.h"
 #include "CGpioLed.h"
-#include "CToteDetector.h"
+#include "CUpperGoalDetector.h"
 #include "CTestMonitor.h"
 #include "CFrameGrinder.h"
 #include "dbgMsg.h"
 #include "viking_cv_version.h"
 
-CToteDetector::CToteDetector()
+CUpperGoalDetector::CUpperGoalDetector()
 {
 }
 
-CToteDetector::CToteDetector(const CToteDetector& orig)
+CUpperGoalDetector::CUpperGoalDetector(const CUpperGoalDetector& orig)
 {
 }
 
-CToteDetector::~CToteDetector()
+CUpperGoalDetector::~CUpperGoalDetector()
 {
 }
 
-void CToteDetector::init()
+void CUpperGoalDetector::init()
 {
     m_tolerancePercentForRadius = 0.20;
 }
 
-void CToteDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrinder)
+void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrinder)
 {
     try
     {
@@ -101,22 +101,22 @@ void CToteDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrind
         std::vector<std::vector<cv::Point> > grayContours;
         cv::findContours(gray_blob, grayContours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
-        CToteRectangle bestToteRectangleGray;
-        float angleToBlueToteDegrees = 0.0;
-        float offsetFromCenterlineToToteCenterToteFeet = 0.0;
-        bool isGrayToteFound = false;
+        CUpperGoalRectangle bestupperGoalRectangle;
+        float angleToBlueUpperGoalDegrees = 0.0;
+        float offsetFromCenterlineToUpperGoalCenterUpperGoalFeet = 0.0;
+        bool isUpperGoalFound = false;
 #ifdef DETECT_LARGEST_BLOB_NO_FILTER_BASED_ON_SIZE
-        isGrayToteFound = filterContoursToFindLargestBlob(grayContours, bestToteRectangleGray, angleToBlueToteDegrees, offsetFromCenterlineToToteCenterToteFeet);
+        isUpperGoalFound = filterContoursToFindLargestBlob(grayContours, bestupperGoalRectangle, angleToBlueUpperGoalDegrees, offsetFromCenterlineToUpperGoalCenterUpperGoalFeet);
 
-        isGrayToteFound = true;
+        isUpperGoalFound = true;
 #ifdef DISPLAY_CALIBRATION_INFO
         printf("viking_cv version %d.%d.%d", VERSION_YEAR, VERSION_INTERFACE, VERSION_BUILD);
-        if (isGrayToteFound)
+        if (isUpperGoalFound)
         {
             printf("   NearFar_X: %d    LeftRight_Y: %d    Radius  %02f\r",
-                    (int) bestToteRectangleGray.m_ptCenter.x,
-                    (int) bestToteRectangleGray.m_ptCenter.y,
-                    bestToteRectangleGray.m_radius);
+                    (int) bestupperGoalRectangle.m_ptCenter.x,
+                    (int) bestupperGoalRectangle.m_ptCenter.y,
+                    bestupperGoalRectangle.m_radius);
         }
         else
         {
@@ -125,7 +125,7 @@ void CToteDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrind
 #endif
 
 #else
-        isGrayToteFound = filterContoursToFindToteBySize(grayContours, bestToteRectangleGray, angleToBlueToteDegrees, offsetFromCenterlineToToteCenterToteFeet);
+        isUpperGoalFound = filterContoursToFindUpperGoalBySize(grayContours, bestupperGoalRectangle, angleToBlueUpperGoalDegrees, offsetFromCenterlineToUpperGoalCenterUpperGoalFeet);
 #endif
 
         CTestMonitor::getTicks(&timeNow);
@@ -135,33 +135,33 @@ void CToteDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrind
 
         pFrame->m_targetInfo.updateTargetInfo(
                 timeSinceLastCameraFrameMilliseconds, timeLatencyThisCameraFrameMilliseconds, 
-                isGrayToteFound, angleToBlueToteDegrees, offsetFromCenterlineToToteCenterToteFeet);
+                isUpperGoalFound, angleToBlueUpperGoalDegrees, offsetFromCenterlineToUpperGoalCenterUpperGoalFeet);
 
-        pFrame->updateAnnotationInfo(bestToteRectangleGray);
+        pFrame->updateAnnotationInfo(bestupperGoalRectangle);
 
-        m_gpioLed.setGreenLED(isGrayToteFound, pFrame->m_timeRemovedFromQueue[(int) CVideoFrame::FRAME_QUEUE_WAIT_FOR_BLOB_DETECT]);
+        m_gpioLed.setGreenLED(isUpperGoalFound, pFrame->m_timeRemovedFromQueue[(int) CVideoFrame::FRAME_QUEUE_WAIT_FOR_BLOB_DETECT]);
     }
     catch (...)
     {
     }
 }
 
-bool CToteDetector::filterContoursToFindLargestBlob(
+bool CUpperGoalDetector::filterContoursToFindLargestBlob(
         const std::vector<std::vector<cv::Point> >& listContours,
-        CToteRectangle& bestToteRectangle,
-        float& angleToToteDegrees,
-        float& distanceToToteFeet)
+        CUpperGoalRectangle& bestUpperGoalRectangle,
+        float& angleToUpperGoalDegrees,
+        float& distanceToUpperGoalFeet)
 {
-    bool isToteFound = false;
-    bestToteRectangle.init();
-    angleToToteDegrees = -999.0;
-    distanceToToteFeet = -1.0;
+    bool isUpperGoalFound = false;
+    bestUpperGoalRectangle.init();
+    angleToUpperGoalDegrees = -999.0;
+    distanceToUpperGoalFeet = -1.0;
 
     unsigned int i = 0;
-    CToteRectangle tempToteRectangle;
+    CUpperGoalRectangle tempUpperGoalRectangle;
     double aspectRatio, diff, area, predict;
     cv::RotatedRect tempRect, vertRect, horizRect;
-    std::vector<CToteRectangle> listPossibleToteRectangle;
+    std::vector<CUpperGoalRectangle> listPossibleUpperGoalRectangle;
     std::vector<cv::Point> contours_poly;
     for (i = 0; i < listContours.size(); i++)
     {
@@ -173,16 +173,16 @@ bool CToteDetector::filterContoursToFindLargestBlob(
             if (  (tempRect.boundingRect().width > (tempRect.boundingRect().height * 2.5))
                 || (tempRect.boundingRect().height > (tempRect.boundingRect().width * 2.5))  )
             {
-                isToteFound = true;
-                bestToteRectangle.angle = tempRect.angle;
-                bestToteRectangle.center = tempRect.center;
+                isUpperGoalFound = true;
+                bestUpperGoalRectangle.angle = tempRect.angle;
+                bestUpperGoalRectangle.center = tempRect.center;
             }
         }
     }
-    if (isToteFound)
+    if (isUpperGoalFound)
     {
-        //angleToToteDegrees = m_lookupTable[(int) bestToteRectangle.m_ptCenter.x][(int) bestToteRectangle.m_ptCenter.y].angleToToteDegrees;
-        //distanceToToteFeet = m_lookupTable[(int) bestToteRectangle.m_ptCenter.x][(int) bestToteRectangle.m_ptCenter.y].distanceToToteFeet;
+        //angleToUpperGoalDegrees = m_lookupTable[(int) bestUpperGoalRectangle.m_ptCenter.x][(int) bestUpperGoalRectangle.m_ptCenter.y].angleToUpperGoalDegrees;
+        //distanceToUpperGoalFeet = m_lookupTable[(int) bestUpperGoalRectangle.m_ptCenter.x][(int) bestUpperGoalRectangle.m_ptCenter.y].distanceToUpperGoalFeet;
     }
-    return isToteFound;
+    return isUpperGoalFound;
 }

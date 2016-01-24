@@ -28,8 +28,8 @@
 /* (tax free) to "Marina High School Educational Foundation"  (Huntington Beach, CA)       */
 /*******************************************************************************************/
 
-#ifndef CBALLDETECTOR_H
-#define	CBALLDETECTOR_H
+#ifndef CUPPERGOALDETECTOR_H
+#define	CUPPERGOALDETECTOR_H
 
 //#define DISPLAY_CALIBRATION_INFO
 #define DETECT_LARGEST_BLOB_NO_FILTER_BASED_ON_SIZE
@@ -65,20 +65,20 @@
 #define MEAS_X_NEAR 25
 #define MEAS_X_NEAR_EDGE 0
 
-class CToteDetector
+class CUpperGoalDetector
 {
 public:
 
     typedef struct
     {
         float pixelRadius;
-        float distanceToToteFeet;
-        float angleToToteDegrees;
+        float distanceToUpperGoalFeet;
+        float angleToUpperGoalDegrees;
     } RADIUS_TABLE_ITEM;
 
-    CToteDetector();
-    CToteDetector(const CToteDetector& orig);
-    virtual ~CToteDetector();
+    CUpperGoalDetector();
+    CUpperGoalDetector(const CUpperGoalDetector& orig);
+    virtual ~CUpperGoalDetector();
 
     void init();
     void detectBlobs(CVideoFrame* pFrame, CFrameGrinder* pFrameGrinder);
@@ -91,10 +91,10 @@ private:
 private:
     bool filterContoursToFindLargestBlob(
             const std::vector<std::vector<cv::Point> >& listContours,
-            CToteRectangle& bestToteRectangle,
-            float& angleToToteDegrees,
-            float& distanceToToteFeet);
+            CUpperGoalRectangle& bestUpperGoalRectangle,
+            float& angleToUpperGoalDegrees,
+            float& distanceToUpperGoalFeet);
 };
 
-#endif	/* CBALLDETECTOR_H */
+#endif	/* CUPPERGOALDETECTOR_H */
 

@@ -50,14 +50,14 @@ public:
 
     void init();
     void updateAnnotationInfo(
-            const CToteRectangle& ToteRectangleGray);
+            const CUpperGoalRectangle& upperGoalRectangle);
     void annotate();
     void compress();
 
     cv::Mat m_frame;
     CTargetInfo m_targetInfo;
 
-    CToteRectangle m_toteRectangleGray;
+    CUpperGoalRectangle m_upperGoalRectangle;
 
     struct timespec m_timeAddedToQueue[CVideoFrame::NUMBER_OF_FRAME_QUEUES];
     struct timespec m_timeRemovedFromQueue[CVideoFrame::NUMBER_OF_FRAME_QUEUES];

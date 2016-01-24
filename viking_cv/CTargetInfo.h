@@ -48,9 +48,9 @@ public:
     void updateTargetInfo(
             int timeSinceLastCameraFrameMilliseconds,
             int timeLatencyThisCameraFrameMilliseconds, 
-            bool isGrayToteFound,
-            float angleFromStraightAheadToTote,
-            float offsetFromCenterlineToToteCenter);
+            bool isUpperGoalFound,
+            float angleFromStraightAheadToUpperGoal,
+            float offsetFromCenterlineToUpperGoalCenter);
 
     void initTargetInfoFromText(const std::string& targetInfoText);
 
@@ -66,21 +66,21 @@ public:
     }
 
     /* 0 == not found */
-    int isGrayToteFound() const
+    int isUpperGoalFound() const
     {
-        return m_isGrayToteFound;
+        return m_isUpperGoalFound;
     }
 
     /* degrees, + == to the right */
-    float angleFromStraightAheadToTote() const
+    float angleFromStraightAheadToUpperGoal() const
     {
-        return m_angleFromStraightAheadToTote;
+        return m_angleFromStraightAheadToUpperGoal;
     }
 
     /* feet from back of robot, should always be positive */
-    float offsetFromCenterlineToToteCenter() const
+    float offsetFromCenterlineToUpperGoalCenter() const
     {
-        return m_offsetFromCenterlineToToteCenter;
+        return m_offsetFromCenterlineToUpperGoalCenter;
     }
 
     void initFormattedTextFromTargetInfo();
@@ -91,9 +91,9 @@ private:
     std::string m_targetInfoText;
     int m_timeSinceLastCameraFrameMilliseconds;
     int m_timeLatencyThisCameraFrameMilliseconds;
-    int m_isGrayToteFound;
-    float m_angleFromStraightAheadToTote;
-    float m_offsetFromCenterlineToToteCenter;
+    int m_isUpperGoalFound;
+    float m_angleFromStraightAheadToUpperGoal;
+    float m_offsetFromCenterlineToUpperGoalCenter;
 };
 
 #endif	/* CTARGETINFO_H */

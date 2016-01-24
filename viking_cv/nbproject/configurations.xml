@@ -12,8 +12,8 @@
       <itemPath>CMessageFromClient.h</itemPath>
       <itemPath>CTargetInfo.h</itemPath>
       <itemPath>CTestMonitor.h</itemPath>
-      <itemPath>CToteDetector.h</itemPath>
-      <itemPath>CToteRectangle.h</itemPath>
+      <itemPath>CUpperGoalDetector.h</itemPath>
+      <itemPath>CUpperGoalRectangle.h</itemPath>
       <itemPath>CVideoFrame.h</itemPath>
       <itemPath>CVideoFrameQueue.h</itemPath>
       <itemPath>dbgMsg.h</itemPath>
@@ -34,8 +34,8 @@
       <itemPath>CMessageFromClient.cpp</itemPath>
       <itemPath>CTargetInfo.cpp</itemPath>
       <itemPath>CTestMonitor.cpp</itemPath>
-      <itemPath>CToteDetector.cpp</itemPath>
-      <itemPath>CToteRectangle.cpp</itemPath>
+      <itemPath>CUpperGoalDetector.cpp</itemPath>
+      <itemPath>CUpperGoalRectangle.cpp</itemPath>
       <itemPath>CVideoFrame.cpp</itemPath>
       <itemPath>CVideoFrameQueue.cpp</itemPath>
       <itemPath>dbgMsg.cpp</itemPath>
@@ -112,13 +112,13 @@
       </item>
       <item path="CTestMonitor.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="CToteDetector.cpp" ex="false" tool="1" flavor2="0">
+      <item path="CUpperGoalDetector.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="CToteDetector.h" ex="false" tool="3" flavor2="0">
+      <item path="CUpperGoalDetector.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="CToteRectangle.cpp" ex="false" tool="1" flavor2="0">
+      <item path="CUpperGoalRectangle.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="CToteRectangle.h" ex="false" tool="3" flavor2="0">
+      <item path="CUpperGoalRectangle.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="CVideoFrame.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -201,13 +201,13 @@
       </item>
       <item path="CTestMonitor.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="CToteDetector.cpp" ex="false" tool="1" flavor2="0">
+      <item path="CUpperGoalDetector.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="CToteDetector.h" ex="false" tool="3" flavor2="0">
+      <item path="CUpperGoalDetector.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="CToteRectangle.cpp" ex="false" tool="1" flavor2="0">
+      <item path="CUpperGoalRectangle.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="CToteRectangle.h" ex="false" tool="3" flavor2="0">
+      <item path="CUpperGoalRectangle.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="CVideoFrame.cpp" ex="false" tool="1" flavor2="0">
       </item>

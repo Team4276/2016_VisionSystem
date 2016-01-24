@@ -32,7 +32,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "CToteRectangle.h"
+#include "CUpperGoalRectangle.h"
 #include "CTargetInfo.h"
 #include "CVideoFrame.h"
 #include "dbgMsg.h"
@@ -49,16 +49,16 @@ CVideoFrame::~CVideoFrame()
 void CVideoFrame::init()
 {
     m_targetInfo.init();
-    m_toteRectangleGray.init();
+    m_upperGoalRectangle.init();
     memset(m_timeAddedToQueue, 0, sizeof (struct timespec)*CVideoFrame::NUMBER_OF_FRAME_QUEUES);
     memset(m_timeRemovedFromQueue, 0, sizeof (struct timespec)*CVideoFrame::NUMBER_OF_FRAME_QUEUES);
     m_outbuf.clear();
     m_params.clear();
 }
 
-void CVideoFrame::updateAnnotationInfo(const CToteRectangle& ToteRectangleGray)
+void CVideoFrame::updateAnnotationInfo(const CUpperGoalRectangle& upperGoalRectangle)
 {
-    m_toteRectangleGray = ToteRectangleGray;
+    m_upperGoalRectangle = upperGoalRectangle;
 }
 
 void CVideoFrame::annotate()
@@ -66,9 +66,9 @@ void CVideoFrame::annotate()
     const cv::Scalar colorGreen = cv::Scalar(0, 255, 0);
     const cv::Scalar colorOrange = cv::Scalar(0, 128, 255);
 
-    if (m_targetInfo.isGrayToteFound())
+    if (m_targetInfo.isUpperGoalFound())
     {
-        cv::circle(m_frame, m_toteRectangleGray.center, (int)m_toteRectangleGray.angle, colorOrange, 3, 8, 0);
+        cv::circle(m_frame, m_upperGoalRectangle.center, (int)m_upperGoalRectangle.angle, colorOrange, 3, 8, 0);
     }
 }
 

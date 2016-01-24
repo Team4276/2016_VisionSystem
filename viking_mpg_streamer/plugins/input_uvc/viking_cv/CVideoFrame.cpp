@@ -32,7 +32,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "CToteRectangle.h"
+#include "CUpperGoalRectangle.h"
 #include "CTargetInfo.h"
 #include "CVideoFrame.h"
 #include "dbgMsg.h"
@@ -49,16 +49,16 @@ CVideoFrame::~CVideoFrame()
 void CVideoFrame::init()
 {
     m_targetInfo.init();
-    m_toteRectangleGray.init();
+    m_upperGoalRectangle.init();
     memset(m_timeAddedToQueue, 0, sizeof (struct timespec)*CVideoFrame::NUMBER_OF_FRAME_QUEUES);
     memset(m_timeRemovedFromQueue, 0, sizeof (struct timespec)*CVideoFrame::NUMBER_OF_FRAME_QUEUES);
     m_outbuf.clear();
     m_params.clear();
 }
 
-void CVideoFrame::updateAnnotationInfo(const CToteRectangle& ToteRectangleGray)
+void CVideoFrame::updateAnnotationInfo(const CUpperGoalRectangle& upperGoalRectangle)
 {
-    m_toteRectangleGray = ToteRectangleGray;
+    m_upperGoalRectangle = upperGoalRectangle;
 }
 
 void CVideoFrame::annotate()
@@ -77,20 +77,20 @@ void CVideoFrame::annotate()
     cv::Point pt4((VIEW_PIXEL_X_WIDTH/2) + PIXEL_OFFSET_FROM_CENTERLINE_TO_CAMERA + 20, VIEW_PIXEL_Y_HEIGHT - (PIXEL_OFFSET_FROM_BOTTOM_OF_VIEW_TO_COLLECTOR_WHEELS-20));
     cv::line(m_frame, pt3, pt4, colorGreen, 3, 4, 0);
         
-    if (m_targetInfo.isGrayToteFound())
+    if (m_targetInfo.isUpperGoalFound())
     {  
         // Find midpoints of the 4 sides of the rectangle, and draw from those points to the center
         cv::Point2f pts[4];
-        m_toteRectangleGray.points(pts);
+        m_upperGoalRectangle.points(pts);
         cv::Point2f pt5((pts[0].x + pts[1].x)/2,(pts[0].y + pts[1].y)/2 );
         cv::Point2f pt6((pts[1].x + pts[2].x)/2,(pts[1].y + pts[2].y)/2 );
         cv::Point2f pt7((pts[2].x + pts[3].x)/2,(pts[2].y + pts[3].y)/2 );
         cv::Point2f pt8((pts[3].x + pts[0].x)/2,(pts[3].y + pts[0].y)/2 );
          
-        cv::line(m_frame, pt5, m_toteRectangleGray.center, colorYellow, 3, 4, 0);
-        cv::line(m_frame, pt6, m_toteRectangleGray.center, colorYellow, 3, 4, 0);
-        cv::line(m_frame, pt7, m_toteRectangleGray.center, colorYellow, 3, 4, 0);
-        cv::line(m_frame, pt8, m_toteRectangleGray.center, colorYellow, 3, 4, 0);
+        cv::line(m_frame, pt5, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
+        cv::line(m_frame, pt6, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
+        cv::line(m_frame, pt7, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
+        cv::line(m_frame, pt8, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
     }
 }
 

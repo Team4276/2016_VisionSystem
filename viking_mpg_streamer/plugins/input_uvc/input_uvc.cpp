@@ -49,13 +49,13 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include "viking_cv/CToteRectangle.h"
+#include "viking_cv/CUpperGoalRectangle.h"
 #include "viking_cv/CTargetInfo.h"
 #include "viking_cv/CVideoFrame.h"
 #include "viking_cv/CVideoFrameQueue.h"
 #include "viking_cv/CConnectionServer.h"
 #include "viking_cv/CGpioLed.h"
-#include "viking_cv/CToteDetector.h"
+#include "viking_cv/CUpperGoalDetector.h"
 #include "viking_cv/CTestMonitor.h"
 #include "viking_cv/CFrameGrinder.h"
 #include "viking_cv/dbgMsg.h"

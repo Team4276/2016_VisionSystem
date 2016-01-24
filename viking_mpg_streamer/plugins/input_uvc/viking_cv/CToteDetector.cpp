@@ -38,37 +38,37 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
-#include "CToteRectangle.h"
+#include "CUpperGoalRectangle.h"
 #include "CTargetInfo.h"
 #include "CVideoFrame.h"
 #include "CVideoFrameQueue.h"
 #include "CConnectionServer.h"
 #include "CGpioLed.h"
-#include "CToteDetector.h"
+#include "CUpperGoalDetector.h"
 #include "CTestMonitor.h"
 #include "CFrameGrinder.h"
 #include "dbgMsg.h"
 #include "viking_cv_version.h"
 
 
-CToteDetector::CToteDetector()
+CUpperGoalDetector::CUpperGoalDetector()
 {
 }
 
-CToteDetector::CToteDetector(const CToteDetector& orig)
+CUpperGoalDetector::CUpperGoalDetector(const CUpperGoalDetector& orig)
 {
 }
 
-CToteDetector::~CToteDetector()
+CUpperGoalDetector::~CUpperGoalDetector()
 {
 }
 
-void CToteDetector::init()
+void CUpperGoalDetector::init()
 {
     m_tolerancePercentForRadius = 0.20;
 }
 
-void CToteDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrinder)
+void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrinder)
 {
     try
     {
@@ -135,18 +135,18 @@ void CToteDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrind
         //}
         //pFrameGrinder->m_testMonitor.saveFrameToJpeg(pFrame->m_frame);
 
-        CToteRectangle bestToteRectangleGray;
-        float toteDirectionDegrees = 0.0;
-        float toteAngleDegrees = 0.0;
-        float distanceToToteCenterInches = 0.0;
-        bool isGrayToteFound = false;
+        CUpperGoalRectangle bestToteRectangleGray;
+        float upperGoalDirectionDegrees = 0.0;
+        float upperGoalAngleDegrees = 0.0;
+        float distanceToGoalCenterInches = 0.0;
+        bool isUpperGoalFound = false;
 #ifdef DETECT_LARGEST_BLOB_NO_FILTER_BASED_ON_SIZE
-        isGrayToteFound = filterContoursToFindLargestBlob(grayContours, bestToteRectangleGray,
-                                                           toteDirectionDegrees, toteAngleDegrees, distanceToToteCenterInches);
+        isUpperGoalFound = filterContoursToFindLargestBlob(grayContours, bestToteRectangleGray,
+                                                           upperGoalDirectionDegrees, upperGoalAngleDegrees, distanceToGoalCenterInches);
 
 #ifdef DISPLAY_CALIBRATION_INFO
         printf("viking_cv version %d.%d.%d", VERSION_YEAR, VERSION_INTERFACE, VERSION_BUILD);
-        if (isGrayToteFound)
+        if (isUpperGoalFound)
         {
             printf("   NearFar_X: %d    LeftRight_Y: %d    Radius  %02f\r",
                     (int) bestToteRectangleGray.m_ptCenter.x,
@@ -160,7 +160,7 @@ void CToteDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrind
 #endif
 
 #else
-        isGrayToteFound = filterContoursToFindToteBySize(grayContours, bestToteRectangleGray, angleToBlueToteDegrees, offsetFromCenterlineToToteCenterToteFeet);
+        isUpperGoalFound = filterContoursToFindToteBySize(grayContours, bestToteRectangleGray, angleToBlueToteDegrees, offsetFromCenterlineToToteCenterToteFeet);
 #endif
 
         CTestMonitor::getTicks(&timeNow);
@@ -170,38 +170,38 @@ void CToteDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrind
 
         pFrame->m_targetInfo.updateTargetInfo(
                 timeSinceLastCameraFrameMilliseconds, timeLatencyThisCameraFrameMilliseconds, 
-                isGrayToteFound, toteDirectionDegrees, toteAngleDegrees, distanceToToteCenterInches);
+                isUpperGoalFound, upperGoalDirectionDegrees, upperGoalAngleDegrees, distanceToGoalCenterInches);
 
         pFrame->updateAnnotationInfo(bestToteRectangleGray);
 
-        m_gpioLed.setGreenLED(isGrayToteFound, pFrame->m_timeRemovedFromQueue[(int) CVideoFrame::FRAME_QUEUE_WAIT_FOR_BLOB_DETECT]);
+        m_gpioLed.setGreenLED(isUpperGoalFound, pFrame->m_timeRemovedFromQueue[(int) CVideoFrame::FRAME_QUEUE_WAIT_FOR_BLOB_DETECT]);
     }
     catch (...)
     {
     }
 }
 
-bool CToteDetector::filterContoursToFindLargestBlob(
+bool CUpperGoalDetector::filterContoursToFindLargestBlob(
         const std::vector<std::vector<cv::Point> >& listContours,
-        CToteRectangle& bestToteRectangle,
-        float& toteDirectionDegrees,
-        float& toteAngleDegrees,
-        float& distanceToToteCenterInches)
+        CUpperGoalRectangle& bestToteRectangle,
+        float& upperGoalDirectionDegrees,
+        float& upperGoalAngleDegrees,
+        float& distanceToGoalCenterInches)
 {
     const cv::Point2f robotCenter(VIEW_PIXEL_X_WIDTH + (PIXEL_OFFSET_FROM_CENTERLINE_TO_CAMERA), 
             VIEW_PIXEL_Y_HEIGHT + PIXEL_OFFSET_FROM_ROBOT_CENTER_TO_BOTTOM_OF_VIEW);
     
     bool isToteFound = false;
     bestToteRectangle.init();
-    toteDirectionDegrees = -999.0;
-    toteAngleDegrees = -999.0;
-    distanceToToteCenterInches = -1.0;
+    upperGoalDirectionDegrees = -999.0;
+    upperGoalAngleDegrees = -999.0;
+    distanceToGoalCenterInches = -1.0;
 
     unsigned int i = 0;
-    CToteRectangle tempToteRectangle;
+    CUpperGoalRectangle tempToteRectangle;
     double aspectRatio, diff, area, predict, max;
     cv::RotatedRect tempRect, vertRect, horizRect;
-    std::vector<CToteRectangle> listPossibleToteRectangle;
+    std::vector<CUpperGoalRectangle> listPossibleToteRectangle;
     std::vector<cv::Point> contours_poly;
     max = 0.0;
     for (i = 0; i < listContours.size(); i++)
@@ -221,12 +221,12 @@ bool CToteDetector::filterContoursToFindLargestBlob(
     if (isToteFound)
     {
         cv::Point2f diff = robotCenter - bestToteRectangle.center;
-        distanceToToteCenterInches = cv::sqrt(diff.x*diff.x + diff.y*diff.y);
-        distanceToToteCenterInches *= INCHES_PER_PIXEL;
+        distanceToGoalCenterInches = cv::sqrt(diff.x*diff.x + diff.y*diff.y);
+        distanceToGoalCenterInches *= INCHES_PER_PIXEL;
 
-        toteDirectionDegrees = atan(diff.x/diff.y) * DEGREES_PER_RADIAN;
+        upperGoalDirectionDegrees = atan(diff.x/diff.y) * DEGREES_PER_RADIAN;
         
-        toteAngleDegrees = bestToteRectangle.angle;
+        upperGoalAngleDegrees = bestToteRectangle.angle;
     }
     return isToteFound;
 }

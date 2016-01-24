@@ -37,13 +37,13 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
-#include "CToteRectangle.h"
+#include "CUpperGoalRectangle.h"
 #include "CTargetInfo.h"
 #include "CVideoFrame.h"
 #include "CVideoFrameQueue.h"
 #include "CConnectionServer.h"
 #include "CGpioLed.h"
-#include "CToteDetector.h"
+#include "CUpperGoalDetector.h"
 #include "CTestMonitor.h"
 #include "CFrameGrinder.h"
 #include "dbgMsg.h"
@@ -99,8 +99,8 @@ void CTestMonitor::init()
     m_nNextFile = getNextFileNumber(m_sLogFolder);
 
 
-    m_nIntervalisGrayToteFound = 0;
-    m_avgGrayToteRectangle.init();
+    m_nIntervalisUpperGoalFound = 0;
+    m_avgUpperGoalRectangle.init();
     m_nCountTestInterval = 0;
     memset(&m_avgElapsedSeconds, 0, sizeof (double)*NUMBER_OF_TIME_IN_TASK);
     memset(&m_savedElapsedSeconds, 0, sizeof (double)*NUMBER_OF_TIME_IN_TASK);
@@ -328,19 +328,19 @@ void CTestMonitor::monitorQueueTimesBeforeReturnToFreeQueue(CVideoFrame* pFrame,
                 timeAtStartOfInterval,
                 pFrame->m_timeAddedToQueue[(int) CVideoFrame::FRAME_QUEUE_FREE]);
         timeAtStartOfInterval = pFrame->m_timeAddedToQueue[(int) CVideoFrame::FRAME_QUEUE_FREE];
-        if (m_nIntervalisGrayToteFound == 0)
+        if (m_nIntervalisUpperGoalFound == 0)
         {
             sLine += "Gray rectangle not found\n";
         }
         else
         {
-            m_avgGrayToteRectangle.center.x /= m_nIntervalisGrayToteFound;
-            m_avgGrayToteRectangle.center.y /= m_nIntervalisGrayToteFound;
-            m_avgGrayToteRectangle.angle /= m_nIntervalisGrayToteFound;
+            m_avgUpperGoalRectangle.center.x /= m_nIntervalisUpperGoalFound;
+            m_avgUpperGoalRectangle.center.y /= m_nIntervalisUpperGoalFound;
+            m_avgUpperGoalRectangle.angle /= m_nIntervalisUpperGoalFound;
             sLine += "Gray rectangle (";
-            sLine += numberToText(m_nIntervalisGrayToteFound);
+            sLine += numberToText(m_nIntervalisUpperGoalFound);
             sLine += " in this interval) avg ";
-            sLine += m_avgGrayToteRectangle.displayText();
+            sLine += m_avgUpperGoalRectangle.displayText();
             sLine += "\n";
         }
 
@@ -361,8 +361,8 @@ void CTestMonitor::monitorQueueTimesBeforeReturnToFreeQueue(CVideoFrame* pFrame,
             m_nTasksDone[i] = 0;
         }
 
-        m_nIntervalisGrayToteFound = 0;
-        m_avgGrayToteRectangle.init();
+        m_nIntervalisUpperGoalFound = 0;
+        m_avgUpperGoalRectangle.init();
 
         m_nCountTestInterval = 0;
         memset(&m_avgElapsedSeconds, 0, sizeof (unsigned int)*NUMBER_OF_TIME_IN_TASK);
@@ -375,12 +375,12 @@ void CTestMonitor::monitorQueueTimesBeforeReturnToFreeQueue(CVideoFrame* pFrame,
             pFrameGrinder->m_frameQueueList[i].m_droppedFrames = 0;
         }
     }
-    if (pFrame->m_targetInfo.isGrayToteFound())
+    if (pFrame->m_targetInfo.isUpperGoalFound())
     {
-        m_nIntervalisGrayToteFound++;
-        m_avgGrayToteRectangle.center.x += pFrame->m_toteRectangleGray.center.x;
-        m_avgGrayToteRectangle.center.y += pFrame->m_toteRectangleGray.center.y;
-        m_avgGrayToteRectangle.angle += pFrame->m_toteRectangleGray.angle;
+        m_nIntervalisUpperGoalFound++;
+        m_avgUpperGoalRectangle.center.x += pFrame->m_upperGoalRectangle.center.x;
+        m_avgUpperGoalRectangle.center.y += pFrame->m_upperGoalRectangle.center.y;
+        m_avgUpperGoalRectangle.angle += pFrame->m_upperGoalRectangle.angle;
     }
     m_avgElapsedSeconds[TIME_IN_TASK_CAMERA] += getDeltaTimeSeconds(
             pFrame->m_timeRemovedFromQueue[(int) CVideoFrame::FRAME_QUEUE_FREE], // earlier time

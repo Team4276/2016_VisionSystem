@@ -44,10 +44,10 @@ public:
     void updateTargetInfo(
             int timeSinceLastCameraFrameMilliseconds,
             int timeLatencyThisCameraFrameMilliseconds, 
-            bool isGrayToteFound,
-            float toteDirectionDegrees,
-            float toteAngleDegrees,
-            float distanceToToteCenterInches);
+            bool isUpperGoalFound,
+            float upperGoalDirectionDegrees,
+            float upperGoalAngleDegrees,
+            float distanceToGoalCenterInches);
 
     void initTargetInfoFromText(const std::string& targetInfoText);
 
@@ -63,9 +63,9 @@ public:
     }
 
     /* 0 == not found */
-    int isGrayToteFound() const
+    int isUpperGoalFound() const
     {
-        return m_isGrayToteFound;
+        return m_isUpperGoalFound;
     }
 
     std::string initFormattedTextFromTargetInfo();
@@ -73,20 +73,20 @@ public:
 private:
     int m_timeSinceLastCameraFrameMilliseconds;
     int m_timeLatencyThisCameraFrameMilliseconds;
-    int m_isGrayToteFound;
+    int m_isUpperGoalFound;
     
-    // If this is zero the robot is pointed at the tote center. 
-    // Positive (+) means tote is to the right, and the robot needs to rotate clockwise to reduce the angle to zero
-    float m_toteDirectionDegrees;            
+    // If this is zero the robot is pointed at the upper goal center. 
+    // Positive (+) means upper goal is to the right, and the robot needs to rotate clockwise to reduce the angle to zero
+    float m_upperGoalDirectionDegrees;            
     
-    // Rotation of the tote around its center, relative to a straight line from the robot to the tote 
-    // Positive (+) means tote is rotated clockwise and the robot needs to move left to reduce the angle to zero
-    float m_toteAngleDegrees;                  
+    // Rotation of the upper goal around its center, relative to a straight line from the robot to the upper goal 
+    // Positive (+) means upper goal is rotated clockwise and the robot needs to move left to reduce the angle to zero
+    float m_upperGoalAngleDegrees;                  
     
-    // As measured in a straight line from the center of the robot to the center of the tote
+    // As measured in a straight line from the center of the robot to the center of the upper goal
     // For autonomous operation want to arrive at a position where both angles are zero and this distance is a fixed offset "X"
-    // "X" is TBD, depending on ideal distance from the tote to begin autonomous tote pickup
-    float m_distanceToToteCenterInches;      
+    // "X" is TBD, depending on ideal distance from the upper goal to begin autonomous upper goal pickup
+    float m_distanceToGoalCenterInches;      
 };
 
 #endif	/* CTARGETINFO_H */
