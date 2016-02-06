@@ -330,14 +330,14 @@ void CTestMonitor::monitorQueueTimesBeforeReturnToFreeQueue(CVideoFrame* pFrame,
         timeAtStartOfInterval = pFrame->m_timeAddedToQueue[(int) CVideoFrame::FRAME_QUEUE_FREE];
         if (m_nIntervalisUpperGoalFound == 0)
         {
-            sLine += "Gray rectangle not found\n";
+            sLine += "Upper goal not found\n";
         }
         else
         {
             m_avgUpperGoalRectangle.center.x /= m_nIntervalisUpperGoalFound;
             m_avgUpperGoalRectangle.center.y /= m_nIntervalisUpperGoalFound;
             m_avgUpperGoalRectangle.angle /= m_nIntervalisUpperGoalFound;
-            sLine += "Gray rectangle (";
+            sLine += "Upper goal (";
             sLine += numberToText(m_nIntervalisUpperGoalFound);
             sLine += " in this interval) avg ";
             sLine += m_avgUpperGoalRectangle.displayText();

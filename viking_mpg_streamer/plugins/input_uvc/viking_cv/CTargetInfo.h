@@ -41,13 +41,16 @@ public:
 
     void init();
 
+    std::string displayText() const
+    {
+        return m_targetInfoText;
+    }
     void updateTargetInfo(
             int timeSinceLastCameraFrameMilliseconds,
             int timeLatencyThisCameraFrameMilliseconds, 
             bool isUpperGoalFound,
-            float upperGoalDirectionDegrees,
-            float upperGoalAngleDegrees,
-            float distanceToGoalCenterInches);
+            float m_angleFromStraightAheadToUpperGoal,
+            float offsetFromCenterlineToUpperGoalCenter);
 
     void initTargetInfoFromText(const std::string& targetInfoText);
 
@@ -68,25 +71,29 @@ public:
         return m_isUpperGoalFound;
     }
 
+    /* degrees, + == to the right */
+    float angleFromStraightAheadToUpperGoal() const
+    {
+        return m_angleFromStraightAheadToUpperGoal;
+    }
+
+    /* feet from back of robot, should always be positive */
+    float offsetFromCenterlineToUpperGoalCenter() const
+    {
+        return m_m_distanceToUpperGoal;
+    }
+
     std::string initFormattedTextFromTargetInfo();
 
 private:
+
+
+    std::string m_targetInfoText;
     int m_timeSinceLastCameraFrameMilliseconds;
     int m_timeLatencyThisCameraFrameMilliseconds;
     int m_isUpperGoalFound;
-    
-    // If this is zero the robot is pointed at the upper goal center. 
-    // Positive (+) means upper goal is to the right, and the robot needs to rotate clockwise to reduce the angle to zero
-    float m_upperGoalDirectionDegrees;            
-    
-    // Rotation of the upper goal around its center, relative to a straight line from the robot to the upper goal 
-    // Positive (+) means upper goal is rotated clockwise and the robot needs to move left to reduce the angle to zero
-    float m_upperGoalAngleDegrees;                  
-    
-    // As measured in a straight line from the center of the robot to the center of the upper goal
-    // For autonomous operation want to arrive at a position where both angles are zero and this distance is a fixed offset "X"
-    // "X" is TBD, depending on ideal distance from the upper goal to begin autonomous upper goal pickup
-    float m_distanceToGoalCenterInches;      
+    float m_angleFromStraightAheadToUpperGoal;
+    float m_m_distanceToUpperGoal;
 };
 
 #endif	/* CTARGETINFO_H */

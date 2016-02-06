@@ -53,40 +53,38 @@ CTargetInfo::~CTargetInfo()
 
 void CTargetInfo::init()
 {
+    m_targetInfoText = "";
     m_timeSinceLastCameraFrameMilliseconds = 0;
     m_timeLatencyThisCameraFrameMilliseconds = 0;
     m_isUpperGoalFound = 0;
-    m_upperGoalDirectionDegrees = -999.0;
-    m_upperGoalAngleDegrees = -999.0;
-    m_distanceToGoalCenterInches = -1.0;
+    m_angleFromStraightAheadToUpperGoal = 0.0;
+    m_m_distanceToUpperGoal = 0.0;
 }
 
 void CTargetInfo::updateTargetInfo(
         int timeSinceLastCameraFrameMilliseconds,
         int timeLatencyThisCameraFrameMilliseconds,
         bool isUpperGoalFound,
-        float upperGoalDirectionDegrees,
-        float upperGoalAngleDegrees,
-        float distanceToGoalCenterInches)
+        float m_angleFromStraightAheadToUpperGoal,
+        float offsetFromCenterlineToUpperGoalCenter)
 {
     init();
 
     m_timeSinceLastCameraFrameMilliseconds = timeSinceLastCameraFrameMilliseconds;
     m_timeLatencyThisCameraFrameMilliseconds = timeLatencyThisCameraFrameMilliseconds;
 
+    // isFound() is needed for frame annotation,  even ifCV is not oriented)
     m_isUpperGoalFound = isUpperGoalFound;
 
     if (isUpperGoalFound)
     {
-        m_upperGoalDirectionDegrees = upperGoalDirectionDegrees;
-        m_upperGoalAngleDegrees = upperGoalAngleDegrees;
-        m_distanceToGoalCenterInches = distanceToGoalCenterInches;
+        m_angleFromStraightAheadToUpperGoal = m_angleFromStraightAheadToUpperGoal;
+        m_m_distanceToUpperGoal = offsetFromCenterlineToUpperGoalCenter;
     }
     else
     {
-        m_upperGoalDirectionDegrees = -999.0;
-        m_upperGoalAngleDegrees = -999.0;
-        m_distanceToGoalCenterInches = -1.0;
+        m_angleFromStraightAheadToUpperGoal = -999;
+        m_m_distanceToUpperGoal = 999;
     }
 }
 
@@ -98,18 +96,15 @@ void CTargetInfo::initTargetInfoFromText(const std::string& targetInfoText)
 std::string CTargetInfo::initFormattedTextFromTargetInfo()
 {
     char buf[128];
-    int iTemp1 = (int) (m_upperGoalDirectionDegrees * 10.0);
-    int iTemp2 = (int) (m_upperGoalAngleDegrees * 10.0);
-    int iTemp3 = (int) (m_distanceToGoalCenterInches * 10.0);
-
+    int m_angleFromStraightAheadToUpperGoal = (int) (m_angleFromStraightAheadToUpperGoal * 10.0);
+    int offsetFromCenterlineToUpperGoalCenter = (int) (m_m_distanceToUpperGoal * 12.0);
     // Format text for transmission to the cRio
-    sprintf(buf, "%d,%d,%d,%d,%d,%d",
+    sprintf(buf, "%d,%d,%d,%d,%d",
             m_timeSinceLastCameraFrameMilliseconds,
             m_timeLatencyThisCameraFrameMilliseconds,
             m_isUpperGoalFound,
-            iTemp1,
-            iTemp2,
-            iTemp3);
-    return buf;
-    
+            m_angleFromStraightAheadToUpperGoal,
+            offsetFromCenterlineToUpperGoalCenter);
+    m_targetInfoText = buf;
+    return m_targetInfoText;
 }

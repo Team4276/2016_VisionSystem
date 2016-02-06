@@ -52,7 +52,7 @@ public:
 public:
     CVideoFrameQueue m_frameQueueList[CVideoFrame::NUMBER_OF_FRAME_QUEUES];
     CConnectionServer m_connectionServer;
-    CUpperGoalDetector m_ballDetector;
+    CUpperGoalDetector m_upperGoalDetector;
     CTestMonitor m_testMonitor;
 
 protected:

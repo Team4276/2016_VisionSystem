@@ -35,13 +35,6 @@
 #define HOME_NAME "ubuntu"
 //#define TEST_USE_JPEGS_NOT_CAMERA
 
-//#define NO_CV_JUST_STREAM_THE_CAMERA
-
-//#define COLORFILTER_ZOOKS_CLASSROOM_LIFECAM
-//#define COLORFILTER_MARINA_HALLWAY_LIFECAM
-//#define COLORFILTER_MARINA_HALLWAY_LOGITECH
-#define COLORFILTER_LA_SPORTS_ARENA_LOGITECH
-
 
 extern void dbgInit();
 extern void dbgMsg(const char* msg);

@@ -47,8 +47,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/viking_cv/CMessageFromClient.o \
 	${OBJECTDIR}/viking_cv/CTargetInfo.o \
 	${OBJECTDIR}/viking_cv/CTestMonitor.o \
-	${OBJECTDIR}/viking_cv/CToteDetector.o \
-	${OBJECTDIR}/viking_cv/CToteRectangle.o \
+	${OBJECTDIR}/viking_cv/CUpperGoalDetector.o \
+	${OBJECTDIR}/viking_cv/CUpperGoalRectangle.o \
 	${OBJECTDIR}/viking_cv/CVideoFrame.o \
 	${OBJECTDIR}/viking_cv/CVideoFrameQueue.o \
 	${OBJECTDIR}/viking_cv/dbgMsg.o
@@ -138,15 +138,15 @@ ${OBJECTDIR}/viking_cv/CTestMonitor.o: viking_cv/CTestMonitor.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CTestMonitor.o viking_cv/CTestMonitor.cpp
 
-${OBJECTDIR}/viking_cv/CToteDetector.o: viking_cv/CToteDetector.cpp 
+${OBJECTDIR}/viking_cv/CUpperGoalDetector.o: viking_cv/CUpperGoalDetector.cpp 
 	${MKDIR} -p ${OBJECTDIR}/viking_cv
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CToteDetector.o viking_cv/CToteDetector.cpp
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CUpperGoalDetector.o viking_cv/CUpperGoalDetector.cpp
 
-${OBJECTDIR}/viking_cv/CToteRectangle.o: viking_cv/CToteRectangle.cpp 
+${OBJECTDIR}/viking_cv/CUpperGoalRectangle.o: viking_cv/CUpperGoalRectangle.cpp 
 	${MKDIR} -p ${OBJECTDIR}/viking_cv
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CToteRectangle.o viking_cv/CToteRectangle.cpp
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CUpperGoalRectangle.o viking_cv/CUpperGoalRectangle.cpp
 
 ${OBJECTDIR}/viking_cv/CVideoFrame.o: viking_cv/CVideoFrame.cpp 
 	${MKDIR} -p ${OBJECTDIR}/viking_cv

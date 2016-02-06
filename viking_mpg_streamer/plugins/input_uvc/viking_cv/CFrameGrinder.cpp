@@ -72,19 +72,18 @@ void* blob_detect_thread(void* pVoid)
     {
         if (pFrameGrinder->safeBlockingRemoveHead(&pFrame, CVideoFrame::FRAME_QUEUE_WAIT_FOR_BLOB_DETECT))
         {
-            pFrameGrinder->m_ballDetector.detectBlobs(pFrame, pFrameGrinder);
+            pFrameGrinder->m_upperGoalDetector.detectBlobs(pFrame, pFrameGrinder);
             pFrameGrinder->safeAddTail(pFrame, CVideoFrame::FRAME_QUEUE_WAIT_FOR_TEXT_CLIENT);
             pFrameGrinder->m_testMonitor.m_nTasksDone[CTestMonitor::TASK_DONE_BLOB_DETECT]++;
         }
     }
-    return pVoid;
 }
 
 void CFrameGrinder::init()
 {
     unsigned int i = 0;
 
-    m_ballDetector.init();
+    m_upperGoalDetector.init();
 
     m_testMonitor.init();
     for (i = 0; i < CVideoFrame::NUMBER_OF_FRAME_QUEUES; i++)
