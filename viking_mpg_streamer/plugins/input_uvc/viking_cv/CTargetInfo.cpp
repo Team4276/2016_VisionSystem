@@ -58,7 +58,7 @@ void CTargetInfo::init()
     m_timeLatencyThisCameraFrameMilliseconds = 0;
     m_isUpperGoalFound = 0;
     m_angleFromStraightAheadToUpperGoal = 0.0;
-    m_m_distanceToUpperGoal = 0.0;
+    m_distanceToUpperGoal = 0.0;
 }
 
 void CTargetInfo::updateTargetInfo(
@@ -79,12 +79,12 @@ void CTargetInfo::updateTargetInfo(
     if (isUpperGoalFound)
     {
         m_angleFromStraightAheadToUpperGoal = m_angleFromStraightAheadToUpperGoal;
-        m_m_distanceToUpperGoal = offsetFromCenterlineToUpperGoalCenter;
+        m_distanceToUpperGoal = offsetFromCenterlineToUpperGoalCenter;
     }
     else
     {
         m_angleFromStraightAheadToUpperGoal = -999;
-        m_m_distanceToUpperGoal = 999;
+        m_distanceToUpperGoal = 999;
     }
 }
 
@@ -96,15 +96,11 @@ void CTargetInfo::initTargetInfoFromText(const std::string& targetInfoText)
 std::string CTargetInfo::initFormattedTextFromTargetInfo()
 {
     char buf[128];
-    int m_angleFromStraightAheadToUpperGoal = (int) (m_angleFromStraightAheadToUpperGoal * 10.0);
-    int offsetFromCenterlineToUpperGoalCenter = (int) (m_m_distanceToUpperGoal * 12.0);
     // Format text for transmission to the cRio
-    sprintf(buf, "%d,%d,%d,%d,%d",
-            m_timeSinceLastCameraFrameMilliseconds,
-            m_timeLatencyThisCameraFrameMilliseconds,
+    sprintf(buf, "%d,%d,%d",
             m_isUpperGoalFound,
             m_angleFromStraightAheadToUpperGoal,
-            offsetFromCenterlineToUpperGoalCenter);
+            m_distanceToUpperGoal);
     m_targetInfoText = buf;
     return m_targetInfoText;
 }
