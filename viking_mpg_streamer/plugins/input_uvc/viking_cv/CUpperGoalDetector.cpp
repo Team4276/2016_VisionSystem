@@ -76,9 +76,9 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         cv::Mat img_hsv, goal_blob, dstA, dstB;
         static int iCount = 0;
         
-        // 2016 filter values from Team 3019 - TowerTracker.java
-        cv::Scalar lowerBounds = cv::Scalar(58,0,109);
-	cv::Scalar upperBounds = cv::Scalar(93,255,240);
+        // Look for the green hue wee are emitting from the LED halo 
+        cv::Scalar lowerBounds = cv::Scalar(87,0,200);
+	cv::Scalar upperBounds = cv::Scalar(93,255,255);
 
         int timeSinceLastCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
                 timeLastCameraFrame,
@@ -95,7 +95,7 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         cv::inRange(img_hsv, lowerBounds, upperBounds, goal_blob);
             
         iCount++;
-        if ((iCount % 17) == 0)
+        //if ((iCount % 17) == 0)
         {
             pFrameGrinder->m_testMonitor.saveFrameToJpeg(goal_blob);
         }

@@ -176,7 +176,6 @@ void* text_server_thread(void* pVoid)
     {
         if (pFrameGrinder->safeBlockingRemoveHead(&pFrame, CVideoFrame::FRAME_QUEUE_WAIT_FOR_TEXT_CLIENT))
         {
-            /*
             if (pFrameGrinder->m_connectionServer.isTextConnectionReadyToReceive())
             {
                 pFrame->m_targetInfo.initFormattedTextFromTargetInfo();
@@ -187,9 +186,7 @@ void* text_server_thread(void* pVoid)
                 iRet = static_textConnection.writeClient((char*) sMsg.c_str(), sMsg.size());
                 fflush(NULL);
                 pFrameGrinder->m_testMonitor.m_nTasksDone[CTestMonitor::TASK_DONE_TEXT]++;
-            }
-             */
-            
+            }            
             
             pFrameGrinder->safeAddTail(pFrame, CVideoFrame::FRAME_QUEUE_WAIT_FOR_BROWSER_CLIENT);
         }

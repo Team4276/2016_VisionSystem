@@ -80,7 +80,7 @@ public:
     /* feet from back of robot, should always be positive */
     float offsetFromCenterlineToUpperGoalCenter() const
     {
-        return m_distanceToUpperGoal;
+        return m_m_distanceToUpperGoal;
     }
 
     std::string initFormattedTextFromTargetInfo();
@@ -93,7 +93,7 @@ private:
     int m_timeLatencyThisCameraFrameMilliseconds;
     int m_isUpperGoalFound;
     float m_angleFromStraightAheadToUpperGoal;
-    float m_distanceToUpperGoal;
+    float m_m_distanceToUpperGoal;
 };
 
 #endif	/* CTARGETINFO_H */
