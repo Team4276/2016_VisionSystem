@@ -49,8 +49,8 @@ public:
             int timeSinceLastCameraFrameMilliseconds,
             int timeLatencyThisCameraFrameMilliseconds, 
             bool isUpperGoalFound,
-            float m_angleFromStraightAheadToUpperGoal,
-            float offsetFromCenterlineToUpperGoalCenter);
+            float upperGoalAzimuthDegrees,
+            float distanceToUpperGoalInches);
 
     void initTargetInfoFromText(const std::string& targetInfoText);
 
@@ -72,15 +72,15 @@ public:
     }
 
     /* degrees, + == to the right */
-    float angleFromStraightAheadToUpperGoal() const
+    float upperGoalAzimuthDegrees() const
     {
-        return m_angleFromStraightAheadToUpperGoal;
+        return m_upperGoalAzimuthDegrees;
     }
 
     /* feet from back of robot, should always be positive */
-    float offsetFromCenterlineToUpperGoalCenter() const
+    float distanceToUpperGoalInches() const
     {
-        return m_m_distanceToUpperGoal;
+        return m_distanceToUpperGoalInches;
     }
 
     std::string initFormattedTextFromTargetInfo();
@@ -92,8 +92,9 @@ private:
     int m_timeSinceLastCameraFrameMilliseconds;
     int m_timeLatencyThisCameraFrameMilliseconds;
     int m_isUpperGoalFound;
-    float m_angleFromStraightAheadToUpperGoal;
-    float m_m_distanceToUpperGoal;
+    int m_upperGoalRectangle;
+    float m_upperGoalAzimuthDegrees;
+    float m_distanceToUpperGoalInches;
 };
 
 #endif	/* CTARGETINFO_H */

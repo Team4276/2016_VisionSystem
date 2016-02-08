@@ -57,16 +57,16 @@ void CTargetInfo::init()
     m_timeSinceLastCameraFrameMilliseconds = 0;
     m_timeLatencyThisCameraFrameMilliseconds = 0;
     m_isUpperGoalFound = 0;
-    m_angleFromStraightAheadToUpperGoal = 0.0;
-    m_m_distanceToUpperGoal = 0.0;
+    m_upperGoalAzimuthDegrees = 0.0;
+    m_distanceToUpperGoalInches = 0.0;
 }
 
 void CTargetInfo::updateTargetInfo(
         int timeSinceLastCameraFrameMilliseconds,
         int timeLatencyThisCameraFrameMilliseconds,
         bool isUpperGoalFound,
-        float m_angleFromStraightAheadToUpperGoal,
-        float offsetFromCenterlineToUpperGoalCenter)
+        float upperGoalAzimuthDegrees,
+        float distanceToUpperGoalInches)
 {
     init();
 
@@ -78,13 +78,13 @@ void CTargetInfo::updateTargetInfo(
 
     if (isUpperGoalFound)
     {
-        m_angleFromStraightAheadToUpperGoal = m_angleFromStraightAheadToUpperGoal;
-        m_m_distanceToUpperGoal = offsetFromCenterlineToUpperGoalCenter;
+        m_upperGoalAzimuthDegrees = upperGoalAzimuthDegrees;
+        m_distanceToUpperGoalInches = distanceToUpperGoalInches;
     }
     else
     {
-        m_angleFromStraightAheadToUpperGoal = -999;
-        m_m_distanceToUpperGoal = 999;
+        m_upperGoalAzimuthDegrees = -999;
+        m_distanceToUpperGoalInches = 999;
     }
 }
 
@@ -96,15 +96,11 @@ void CTargetInfo::initTargetInfoFromText(const std::string& targetInfoText)
 std::string CTargetInfo::initFormattedTextFromTargetInfo()
 {
     char buf[128];
-    int m_angleFromStraightAheadToUpperGoal = (int) (m_angleFromStraightAheadToUpperGoal * 10.0);
-    int offsetFromCenterlineToUpperGoalCenter = (int) (m_m_distanceToUpperGoal * 12.0);
-    // Format text for transmission to the cRio
-    sprintf(buf, "%d,%d,%d,%d,%d",
-            m_timeSinceLastCameraFrameMilliseconds,
-            m_timeLatencyThisCameraFrameMilliseconds,
+    // Format text for transmission to the RoboRio
+    sprintf(buf, "%d,%d,%d",
             m_isUpperGoalFound,
-            m_angleFromStraightAheadToUpperGoal,
-            offsetFromCenterlineToUpperGoalCenter);
+            (int) (m_upperGoalAzimuthDegrees * 10),
+            (int) m_distanceToUpperGoalInches);
     m_targetInfoText = buf;
     return m_targetInfoText;
 }

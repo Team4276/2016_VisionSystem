@@ -35,6 +35,7 @@ class CUpperGoalRectangle : public cv::RotatedRect
 {
 public:
     CUpperGoalRectangle();
+    CUpperGoalRectangle(cv::RotatedRect rect);
     virtual ~CUpperGoalRectangle();
 
     void init();

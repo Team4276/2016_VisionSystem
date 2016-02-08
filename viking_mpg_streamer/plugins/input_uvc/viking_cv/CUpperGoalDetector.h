@@ -37,34 +37,6 @@
 #define VIEW_PIXEL_Y_WIDTH 240
 #define VIEW_PIXEL_X_HEIGHT 426
 
-#define MEASUREMENT_ARRAY_Y_WIDTH 7
-#define MEASUREMENT_ARRAY_X_HEIGHT 7
-
-#define MEAS_Y_RIGHT_EDGE (VIEW_PIXEL_Y_WIDTH-1)
-#define MEAS_Y_RIGHT 230
-#define MEAS_Y_MID_RIGHT 175
-#define MEAS_Y_CENTER 120
-#define MEAS_Y_MID_LEFT 65
-#define MEAS_Y_LEFT 10
-#define MEAS_Y_LEFT_EDGE 0
-
-/*
-#define MEAS_X_FAR_EDGE (VIEW_PIXEL_X_HEIGHT-1)
-#define MEAS_X_FAR 400
-#define MEAS_X_MID_FAR 375
-#define MEAS_X_CENTER 350
-#define MEAS_X_MID_NEAR 300
-#define MEAS_X_NEAR 250
-#define MEAS_X_NEAR_EDGE 0
-*/
-#define MEAS_X_FAR_EDGE (VIEW_PIXEL_X_HEIGHT-1)
-#define MEAS_X_FAR 400
-#define MEAS_X_MID_FAR 306
-#define MEAS_X_CENTER 213
-#define MEAS_X_MID_NEAR 94
-#define MEAS_X_NEAR 25
-#define MEAS_X_NEAR_EDGE 0
-
 class CUpperGoalDetector
 {
 public:
@@ -89,12 +61,12 @@ private:
     CGpioLed m_gpioLed;
 
 private:
-    bool filterContoursLikeTowerTracker(
-            std::vector<std::vector<cv::Point> >& listContours,
+    bool filterContours(
+            const std::vector<std::vector<cv::Point> >& listContours,
             int originalMatHeight, int originalMatWidth,
-            CUpperGoalRectangle& bestUpperGoalRectangle,
-            float& angleToUpperGoalDegrees,
-            float& m_distanceToUpperGoalFeet);
+            CUpperGoalRectangle& upperGoalRectangle,
+            float& upperGoalAzimuthDegrees,
+            float& distanceToUpperGoalInches);
     
     double normalize360(double angle);
 };

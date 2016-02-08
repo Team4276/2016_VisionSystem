@@ -66,9 +66,22 @@ void CVideoFrame::annotate()
     const cv::Scalar colorGreen = cv::Scalar(0, 255, 0);
     const cv::Scalar colorOrange = cv::Scalar(0, 128, 255);
 
-    if (m_targetInfo.isUpperGoalFound())
+    if (m_targetInfo.isUpperGoalFound() != 0)
     {
-        cv::circle(m_frame, m_upperGoalRectangle.center, (int)m_upperGoalRectangle.angle, colorOrange, 3, 8, 0);
+        const cv::Scalar colorYellow = cv::Scalar(0, 255, 255);
+
+    // Find midpoints of the 4 sides of the rectangle, and draw from those points to the center
+        cv::Point2f pts[4];
+        m_upperGoalRectangle.points(pts);
+        cv::Point2f pt5((pts[0].x + pts[1].x)/2,(pts[0].y + pts[1].y)/2 );
+        cv::Point2f pt6((pts[1].x + pts[2].x)/2,(pts[1].y + pts[2].y)/2 );
+        cv::Point2f pt7((pts[2].x + pts[3].x)/2,(pts[2].y + pts[3].y)/2 );
+        cv::Point2f pt8((pts[3].x + pts[0].x)/2,(pts[3].y + pts[0].y)/2 );
+         
+        cv::line(m_frame, pt5, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
+        cv::line(m_frame, pt6, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
+        cv::line(m_frame, pt7, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
+        cv::line(m_frame, pt8, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
     }
 }
 

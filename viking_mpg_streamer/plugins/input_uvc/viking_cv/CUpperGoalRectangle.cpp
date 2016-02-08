@@ -40,6 +40,13 @@ CUpperGoalRectangle::CUpperGoalRectangle()
     init();
 }
 
+CUpperGoalRectangle::CUpperGoalRectangle(cv::RotatedRect rect)
+{
+    center = rect.center;
+    angle = rect.angle;
+    size = rect.size;
+}
+
 CUpperGoalRectangle::~CUpperGoalRectangle()
 {
 }

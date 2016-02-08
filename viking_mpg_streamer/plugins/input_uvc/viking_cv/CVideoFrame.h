@@ -30,7 +30,7 @@
 /*******************************************************************************************/
 
 
-#define VIEW_PIXEL_X_WIDTH 416
+#define VIEW_PIXEL_X_WIDTH 424
 #define VIEW_PIXEL_Y_HEIGHT 240
 
 class CVideoFrame
