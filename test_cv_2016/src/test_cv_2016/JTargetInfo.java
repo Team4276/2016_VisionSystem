@@ -69,13 +69,13 @@ public class JTargetInfo {
     
     public void initTargetInfoFromText(String txt) {
         String[] items = txt.split(",");
-        int iTemp = Integer.getInteger(items[0]);
+        Integer iTemp = Integer.parseInt(items[0]);
         setIsUpperGoalFound(iTemp != 0);
         
-        iTemp = Integer.getInteger(items[1]);
+        iTemp = Integer.parseInt(items[1]);
         setAngleFromStraightAheadToUpperGoal(iTemp);
         
-        iTemp = Integer.getInteger(items[2]);
+        iTemp = Integer.parseInt(items[2]);
         setDistanceToUpperGoal(iTemp);
     }
 }
