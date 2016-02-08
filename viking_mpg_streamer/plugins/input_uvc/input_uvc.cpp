@@ -417,34 +417,10 @@ void *cam_thread(void *arg)
     std::string sPath = sBasePath;
     
     cv::Mat frame1;
-#ifdef COLORFILTER_ZOOKS_CLASSROOM_LIFECAM
-    sPath += "/Lifecam_FireBlanket.jpg";
+    sPath += "/05ft_63deg.jpg";
     frame1 = cv::imread(sPath.c_str(), CV_LOAD_IMAGE_COLOR);
     sPath = sBasePath;
-    sPath += "/Lifecam_FireBlanket.jpg";
-#endif
-    
-#ifdef COLORFILTER_MARINA_HALLWAY_LIFECAM
-    sPath += "/MarinaHallwayLifecam_4Feb2015.jpg";
-    frame1 = cv::imread(sPath.c_str(), CV_LOAD_IMAGE_COLOR);
-    sPath = sBasePath;
-    sPath += "/MarinaHallwayLifecam2_4Feb2015.jpg";
-#endif
-    
-    
-#ifdef COLORFILTER_MARINA_HALLWAY_LOGITECH
-    sPath += "/logitech_marina_hallway_17Feb2015.jpg";
-    frame1 = cv::imread(sPath.c_str(), CV_LOAD_IMAGE_COLOR);
-    sPath = sBasePath;
-    sPath += "/logitech_marina_hallway_17Feb2015.jpg";
-#endif
- 
-#ifdef COLORFILTER_LA_SPORTS_ARENA_LOGITECH
-    sPath += "/LB_sports_arena_logitech4.jpg";
-    frame1 = cv::imread(sPath.c_str(), CV_LOAD_IMAGE_COLOR);
-    sPath = sBasePath;
-    sPath += "/LB_sports_arena_logitech3.jpg";
-#endif
+    sPath += "/05ft_63deg.jpg";
 
     
     cv::Mat frame2 = cv::imread(sPath.c_str(), CV_LOAD_IMAGE_COLOR);
