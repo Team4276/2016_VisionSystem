@@ -56,28 +56,19 @@ public class JReceiver
         }
 
         m_initOK = true;
+            
+        m_out.println("GET");   // Tells the BeagleBone to start sending text
     }
-
-    void getFromSocket()
+    
+    String getOneLineFromSocket()
     {
-        try
-        {
-            m_out.println("GET");
-            String textInput;
-            String result = "";
-            Integer iCount = 0;
-            while ((textInput = m_in.readLine()) != null)
-            {
-                m_currentTargetInfo.initTargetInfoFromText(textInput);
-                iCount++;
-                result = iCount.toString();
-                result += " -- ";
-                result += textInput;
-                System.out.println(result);
-            }
-        } catch (IOException ex)
-        {
+        String textInput;
+        try {
+            textInput = m_in.readLine();
+        } catch (IOException ex) {
             Logger.getLogger(JReceiver.class.getName()).log(Level.SEVERE, null, ex);
+            textInput = null;
         }
+       return textInput;
     }
 }
