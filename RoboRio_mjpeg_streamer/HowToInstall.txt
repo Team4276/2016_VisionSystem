@@ -1,0 +1,37 @@
+SSH to RoboRio IP address
+user admin
+password none - just hit <Return>
+
+cd /usr/lib
+cp /media/sda1/FRC2016/2016_VisionSystem/RoboRio_mjpeg_streamer/jpeg.tgz .
+tar -zxvf jpeg.tgz
+
+cp /media/sda1/FRC2016/2016_VisionSystem/RoboRio_mjpeg_streamer/usrlib/* .
+cd /usr/bin
+cp /media/sda1/FRC2016/2016_VisionSystem/RoboRio_mjpeg_streamer/usrbin/* .
+
+cd /etc/init.d
+cp /media/sda1/FRC2016/2016_VisionSystem/RoboRio_mjpeg_streamer/etcinitd/* .
+
+cd /var
+mkdir www
+chmod 755 www
+
+cd /var/www
+cp /media/sda1/FRC2016/2016_VisionSystem/RoboRio_mjpeg_streamer/varwww/* .
+
+cd /etc/rc5.d
+ln -s ../init.d/start_mjpg_streamer.sh S28mjpeg_streamer 
+
+reboot
+
+
+Open a browser on the driver station and look foor port 8080 on the RoboRio 
+http://10.42.76.2:8080
+
+If no video SSH to RoboRio and 
+ls /dev/v*
+
+If the video is at some other number than /dev/video0 edit the start file
+cd /etc/init.d
+vi start_mjpg_streamer.sh 
