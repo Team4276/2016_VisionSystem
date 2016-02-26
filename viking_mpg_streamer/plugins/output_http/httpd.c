@@ -317,7 +317,6 @@ void send_snapshot(int fd, int input_number)
 
     /* allocate a buffer for this single frame */
     if((frame = malloc(frame_size + 1)) == NULL) {
-        free(frame);
         pthread_mutex_unlock(&pglobal->in[input_number].db);
         send_error(fd, 500, "not enough memory");
         return;

@@ -77,8 +77,8 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         static int iCount = 0;
  
         // Look for the green hue wee are emitting from the LED halo 
-        cv::Scalar lowerBounds = cv::Scalar(87,0,200);
-	cv::Scalar upperBounds = cv::Scalar(93,255,255);
+        cv::Scalar lowerBounds = cv::Scalar(86,0,120);
+	cv::Scalar upperBounds = cv::Scalar(94,255,255);
 
         int timeSinceLastCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
                 timeLastCameraFrame,
@@ -101,7 +101,7 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         }
 
         //Find the contours. Use the contourOutput Mat so the original image doesn't get overwritten
-        std::vector<std::vector<cv::Point> > goalContours;
+        cv::vector<std::vector<cv::Point> > goalContours;
         cv::findContours(goal_blob, goalContours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
         
         CUpperGoalRectangle upperGoalRectangle;
@@ -161,31 +161,60 @@ bool CUpperGoalDetector::filterContours(
     static double CAMERA_ANGLE = 0;    
     
     static double PI = 3.14159265358979323846264;
-    
+   
     bool isUpperGoalFound = false;
     upperGoalRectangle.init();
     upperGoalAzimuthDegrees = -999.0;
     distanceToUpperGoalInches = -1.0;
-
+   
     cv::RotatedRect tempRect;
-    std::vector<std::vector<cv::Point> > listFilteredContours;
-    for(int i = 0; i < listContours.size(); i++){
-        tempRect = cv::minAreaRect(cv::Mat(listContours.at(i)));
-        if(tempRect.size.height > 0)
+    std::vector<cv::RotatedRect> listFilteredRect;
+    for(int i = 0; i < listContours.size(); i++)
+    {
+    if (listContours.at(i).size() > 4 )  // ==2 contour  is a straight line, == 3 triangle, == 4 '4 sided' (still can't be a "U" shape)
         {
-            float aspect = (float)tempRect.size.width/(float)tempRect.size.height;
-            printf("w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
-            if(   ((tempRect.size.height >= 10) && (tempRect.size.width >= 18))
-               && (aspect >= 1.0) )
+            std::vector<cv::Vec4i>  convexityDefectsSet;
+            std::vector<int> hull;
+            cv::convexHull(listContours.at(i), hull, false );
+            if (hull.size() > 4 )  // ==2 hull is a straight line, == 3 triangle, == 4 '4 sided' (still can't be a "U" shape)
             {
-                listFilteredContours.push_back(listContours.at(i));
+                cv::convexityDefects(listContours.at(i), hull, convexityDefectsSet);
+                tempRect = cv::minAreaRect(cv::Mat(listContours.at(i)));
+                float aspect = (float)tempRect.size.width/(float)tempRect.size.height;
+                if(   (   (tempRect.size.height >= 10) 
+                       && (tempRect.size.width >= 18)  )
+                   && (aspect >= 1.0) )
+                {
+                    printf("w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
+                    bool bFound = false;
+                    for(int j=0; j<convexityDefectsSet.size(); j++)
+                    {    
+                        // defect(start_index, end_index, farthest_pt_index, fixpt_depth)
+                        //     start_index, end_index, farthest_pt_index are 0-based indices in the original contour of the convexity defect beginning, end and the farthest point
+                        //     fixpt_depth is fixed-point approximation (with 8 fractional bits) of the distance between the farthest contour point and the hull. That is, to get the floating-point value of the depth will be fixpt_depth/256.0
+                        //
+                        // So... we look for a dent in the surrounding countour that is more than half the height
+                        double depth = convexityDefectsSet[j][3]/256.0;
+                        printf("convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
+                        if(depth > (tempRect.size.height/2))
+                        {
+                            // Contour is concave (hoping for a "U")
+                            bFound = true;
+                        }
+                    }
+                    if(bFound) 
+                    {
+                        printf(" *** FOUND ***   w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
+                        listFilteredRect.push_back(tempRect);                    
+                    }
+                }
             }
         }
     }
-    isUpperGoalFound = (listFilteredContours.size() == 1);
+    isUpperGoalFound = (listFilteredRect.size() == 1);
     if(isUpperGoalFound)
     {
-        upperGoalRectangle = CUpperGoalRectangle(cv::minAreaRect(cv::Mat(listFilteredContours[0])));
+        upperGoalRectangle = CUpperGoalRectangle(listFilteredRect[0]);
         
         // "fun" math brought to you by miss daisy (team 341)!
         int y = upperGoalRectangle.boundingRect().br().y + upperGoalRectangle.boundingRect().height / 2;

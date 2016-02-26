@@ -404,28 +404,32 @@ Return Value: unused, always NULL
 void *cam_thread(void *arg)
 {
     CVideoFrame* pFrame = NULL;
+ 
+#ifndef TEST_USE_JPEGS_NOT_CAMERA 
     int width = VIEW_PIXEL_X_WIDTH;
     int height = VIEW_PIXEL_Y_HEIGHT;
-    unsigned char *picture = (unsigned char *)malloc(width * height *3*sizeof(char));
     IplImage * img = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);   // obraz OpenCV
-
+#endif
+    
     frameGrinder.init();
 
 #ifdef TEST_USE_JPEGS_NOT_CAMERA 
     std::string sBasePath = "/home/";
     sBasePath += HOME_NAME;
-    std::string sPath = sBasePath;
+    std::string sPath = sBasePath;    
+    sPath += "/0243-20150125-22-21-46.jpg";
+    //sPath += "/0007-20150125-22-36-25.jpg";  
+    cv::Mat frame1 = cv::imread(sPath.c_str(), CV_LOAD_IMAGE_COLOR);
+    if (frame1.empty()) {
+        dbgMsg_s("Failed to read image data from a file1\n");
+    }
     
-    cv::Mat frame1;
-    sPath += "/05ft_63deg.jpg";
-    frame1 = cv::imread(sPath.c_str(), CV_LOAD_IMAGE_COLOR);
     sPath = sBasePath;
-    sPath += "/05ft_63deg.jpg";
-
-    
+    sPath += "/0243-20150125-22-21-46.jpg";
+    //sPath += "/0007-20150125-22-36-25.jpg";  
     cv::Mat frame2 = cv::imread(sPath.c_str(), CV_LOAD_IMAGE_COLOR);
     if (frame2.empty()) {
-        dbgMsg_s("Failed to read image data from a file\n");
+        dbgMsg_s("Failed to read image data from a file2\n");
     }
     bool toggle = false;
 #endif
@@ -462,7 +466,7 @@ void *cam_thread(void *arg)
                 dbgMsg_s("Frame is empty\n");
                 frameGrinder.safeAddTail(pFrame, CVideoFrame::FRAME_QUEUE_FREE);
             }
-             frameGrinder.m_testMonitor.m_nTasksDone[CTestMonitor::TASK_DONE_CAMERA]++;
+            frameGrinder.m_testMonitor.m_nTasksDone[CTestMonitor::TASK_DONE_CAMERA]++;
         }
 
 #else
