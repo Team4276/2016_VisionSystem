@@ -9,8 +9,8 @@
             <header-extensions>h</header-extensions>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects>
-                <make-dep-project>plugins/output_http</make-dep-project>
                 <make-dep-project>plugins/input_uvc</make-dep-project>
+                <make-dep-project>plugins/output_http</make-dep-project>
             </make-dep-projects>
             <sourceRootList/>
             <confList>

@@ -95,7 +95,7 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         cv::inRange(img_hsv, lowerBounds, upperBounds, goal_blob);
             
         iCount++;
-        //if ((iCount % 17) == 0)
+        if ((iCount % 17) == 0)
         {
             pFrameGrinder->m_testMonitor.saveFrameToJpeg(goal_blob);
         }
@@ -185,7 +185,7 @@ bool CUpperGoalDetector::filterContours(
                        && (tempRect.size.width >= 18)  )
                    && (aspect >= 1.0) )
                 {
-                    printf("w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
+                    //printf("w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
                     bool bFound = false;
                     for(int j=0; j<convexityDefectsSet.size(); j++)
                     {    
@@ -195,7 +195,7 @@ bool CUpperGoalDetector::filterContours(
                         //
                         // So... we look for a dent in the surrounding countour that is more than half the height
                         double depth = convexityDefectsSet[j][3]/256.0;
-                        printf("convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
+                        //printf("convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
                         if(depth > (tempRect.size.height/2))
                         {
                             // Contour is concave (hoping for a "U")

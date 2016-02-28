@@ -32,7 +32,7 @@
 #ifndef DBGMSG_H
 #define	DBGMSG_H
 
-#define HOME_NAME "viking"
+#define HOME_NAME "ubuntu"
 //#define TEST_USE_JPEGS_NOT_CAMERA
 
 

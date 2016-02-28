@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
     int daemon = 0, i;
     size_t tmp = 0;
 
-   input[0] = (char*)"input_uvc.so --resolution 416x240 --fps 10 --device /dev/video0";
+   input[0] = (char*)"input_uvc.so --resolution 424x240 --fps 10 --device /dev/video0";
    input[1] = 0;
    global.incnt = 1;
    
