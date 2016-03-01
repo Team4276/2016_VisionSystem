@@ -95,7 +95,7 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         cv::inRange(img_hsv, lowerBounds, upperBounds, goal_blob);
             
         iCount++;
-        if ((iCount % 17) == 0)
+        //if ((iCount % 17) == 0)
         {
             pFrameGrinder->m_testMonitor.saveFrameToJpeg(goal_blob);
         }
@@ -171,7 +171,7 @@ bool CUpperGoalDetector::filterContours(
     std::vector<cv::RotatedRect> listFilteredRect;
     for(int i = 0; i < listContours.size(); i++)
     {
-    if (listContours.at(i).size() > 4 )  // ==2 contour  is a straight line, == 3 triangle, == 4 '4 sided' (still can't be a "U" shape)
+        if (listContours.at(i).size() > 4 )  // ==2 contour  is a straight line, == 3 triangle, == 4 '4 sided' (still can't be a "U" shape)
         {
             std::vector<cv::Vec4i>  convexityDefectsSet;
             std::vector<int> hull;
@@ -181,11 +181,19 @@ bool CUpperGoalDetector::filterContours(
                 cv::convexityDefects(listContours.at(i), hull, convexityDefectsSet);
                 tempRect = cv::minAreaRect(cv::Mat(listContours.at(i)));
                 float aspect = (float)tempRect.size.width/(float)tempRect.size.height;
-                if(   (   (tempRect.size.height >= 10) 
-                       && (tempRect.size.width >= 18)  )
-                   && (aspect >= 1.0) )
+                int shorterSide = tempRect.size.height;
+                int longerSide = tempRect.size.width;
+                if(aspect < 1.0)
                 {
-                    //printf("w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
+                    aspect = 1/aspect;
+                    shorterSide = tempRect.size.width;
+                    longerSide = tempRect.size.height;
+                }
+                if(   (shorterSide >= 10) 
+                   && (longerSide >= 18)  
+                   && (aspect < 4.0)  )
+                {
+                    printf("w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
                     bool bFound = false;
                     for(int j=0; j<convexityDefectsSet.size(); j++)
                     {    
@@ -195,8 +203,8 @@ bool CUpperGoalDetector::filterContours(
                         //
                         // So... we look for a dent in the surrounding countour that is more than half the height
                         double depth = convexityDefectsSet[j][3]/256.0;
-                        //printf("convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
-                        if(depth > (tempRect.size.height/2))
+                        printf("convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
+                        if(depth > (shorterSide/2))
                         {
                             // Contour is concave (hoping for a "U")
                             bFound = true;
