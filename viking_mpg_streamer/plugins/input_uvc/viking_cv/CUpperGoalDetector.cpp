@@ -67,17 +67,53 @@ void CUpperGoalDetector::init()
     m_tolerancePercentForRadius = 0.20;
 }
 
+double CUpperGoalDetector::estimateDistanceInches(const CUpperGoalRectangle& goalRect)
+{
+    double listArea[] =     {1308.0, 1134.0, 894.0,  800.0,  695.0,  457.0,   361.0,   260.0,   0.0};
+    double listDistance[] = {5.0*12, 6.0*12, 7.0*12, 8.0*12, 9.0*12, 13.0*12, 16.0*12, 21.0*12, 0.0}; 
+    int nSamples = 8;
+    
+    double area = goalRect.size.height * goalRect.size.width;
+    if( (area > listArea[0]) || (area < listArea[nSamples-1]) )
+    {
+        return -1;
+    }
+    int iLow=0;
+    int iHigh=0;
+    for(int i=0; i<nSamples-1; i++)
+    {
+        iLow = i;
+        iHigh = i+1;
+        if( (area < listArea[i]) && (area > listArea[i+1]) )
+        {
+            break;
+        }
+    }
+    double areaLow = listArea[iLow];
+    double areaHigh = listArea[iHigh];
+    double areaDiff = listArea[iHigh] - listArea[iLow];
+    
+    double distLow = listDistance[iLow];
+    double distHigh = listDistance[iHigh];
+    double distDiff = listDistance[iHigh] - listDistance[iLow];
+    
+    double partial = ((area - areaLow) / areaDiff);
+    
+    double retDist = distLow + (partial * distDiff);
+    return retDist;
+}
+
 void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrinder)
 {
     try
     {
         static struct timespec timeLastCameraFrame = {0};
         static struct timespec timeNow = {0};
-        cv::Mat img_hsv, goal_blob;
+        cv::Mat img_hsv, img_blur, goal_blob;
         static int iCount = 0;
  
         // Look for the green hue wee are emitting from the LED halo 
-        cv::Scalar lowerBounds = cv::Scalar(86,0,120);
+        cv::Scalar lowerBounds = cv::Scalar(86,0,150);
 	cv::Scalar upperBounds = cv::Scalar(94,255,255);
 
         int timeSinceLastCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
@@ -90,9 +126,11 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         // Not so with HSV, where Hue and Saturation are maintained separately
         // OpenCV has a handy conversion from RGB to HSV
         cv::cvtColor(pFrame->m_frame, img_hsv, CV_BGR2HSV);
+        
+        cv::GaussianBlur(img_hsv, img_blur, cv::Size(5,5),1.5);
 
         // Find the bright response from the retro-reflective tape
-        cv::inRange(img_hsv, lowerBounds, upperBounds, goal_blob);
+        cv::inRange(img_blur, lowerBounds, upperBounds, goal_blob);
             
         iCount++;
         //if ((iCount % 17) == 0)
@@ -161,11 +199,19 @@ bool CUpperGoalDetector::filterContours(
     static double CAMERA_ANGLE = 0;    
     
     static double PI = 3.14159265358979323846264;
+    
+    static double areaPixelsAtDistanceInches[][2] = 
+    {
+        {1625.0, 69.0},
+        {0.0, 0.0}
+    };
    
     bool isUpperGoalFound = false;
     upperGoalRectangle.init();
     upperGoalAzimuthDegrees = -999.0;
     distanceToUpperGoalInches = -1.0;
+    float area = 0.0;
+    float area2 = 0.0;
    
     cv::RotatedRect tempRect;
     std::vector<cv::RotatedRect> listFilteredRect;
@@ -191,9 +237,8 @@ bool CUpperGoalDetector::filterContours(
                 }
                 if(   (shorterSide >= 10) 
                    && (longerSide >= 18)  
-                   && (aspect < 4.0)  )
+                   && (aspect < 2.5)  )
                 {
-                    printf("w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
                     bool bFound = false;
                     for(int j=0; j<convexityDefectsSet.size(); j++)
                     {    
@@ -203,7 +248,7 @@ bool CUpperGoalDetector::filterContours(
                         //
                         // So... we look for a dent in the surrounding countour that is more than half the height
                         double depth = convexityDefectsSet[j][3]/256.0;
-                        printf("convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
+                        printf("w,h [%f,%f]   convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", tempRect.size.width, tempRect.size.height, j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
                         if(depth > (shorterSide/2))
                         {
                             // Contour is concave (hoping for a "U")
@@ -212,27 +257,32 @@ bool CUpperGoalDetector::filterContours(
                     }
                     if(bFound) 
                     {
-                        printf(" *** FOUND ***   w,h,a = %f\t%f\t%f\n",tempRect.size.width, tempRect.size.height, aspect);
+                        area = (float)tempRect.size.width * (float)tempRect.size.height;
+                        printf(" *** FOUND ***   area1 %f  w,h,a,d = %f\t%f\t%f\n", area, tempRect.size.width, tempRect.size.height, aspect);
                         listFilteredRect.push_back(tempRect);                    
                     }
                 }
             }
         }
     }
-    isUpperGoalFound = (listFilteredRect.size() == 1);
+    isUpperGoalFound = (listFilteredRect.size() > 0);
     if(isUpperGoalFound)
     {
-        upperGoalRectangle = CUpperGoalRectangle(listFilteredRect[0]);
+        for(int k=0; k<listFilteredRect.size(); k++)
+        {
+            area = (float)upperGoalRectangle.size.width * (float)upperGoalRectangle.size.height;
+            area2 = (float)listFilteredRect[k].size.width * (float)listFilteredRect[k].size.height;
+            if(area < area2)
+            {
+                upperGoalRectangle = CUpperGoalRectangle(listFilteredRect[k]);               
+            }
+        }
+        area = (float)upperGoalRectangle.size.width * (float)upperGoalRectangle.size.height;
+        printf("goal (x, y) area  (%f, %f) %f", upperGoalRectangle.center.x, upperGoalRectangle.center.y, area);
         
-        // "fun" math brought to you by miss daisy (team 341)!
-        int y = upperGoalRectangle.boundingRect().br().y + upperGoalRectangle.boundingRect().height / 2;
-        y= -((2 * (y / originalMatHeight)) - 1);
-        distanceToUpperGoalInches = (TOP_TARGET_HEIGHT - TOP_CAMERA_HEIGHT) / 
-                        tan((y * VERTICAL_FOV / 2.0 + CAMERA_ANGLE) * PI / 180);
-        //				angle to target...would not rely on this
-        int targetX = upperGoalRectangle.boundingRect().tl().x + upperGoalRectangle.boundingRect().width / 2;
-        targetX = (2 * (targetX / originalMatWidth)) - 1;
-        upperGoalAzimuthDegrees = normalize360(targetX*HORIZONTAL_FOV /2.0 + 0);
+        distanceToUpperGoalInches = estimateDistanceInches(upperGoalRectangle);
+
+        upperGoalAzimuthDegrees = -1;
     }
     return isUpperGoalFound;
 }
