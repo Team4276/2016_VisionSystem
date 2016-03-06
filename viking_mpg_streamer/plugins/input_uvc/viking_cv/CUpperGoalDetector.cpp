@@ -103,6 +103,52 @@ double CUpperGoalDetector::estimateDistanceInches(const CUpperGoalRectangle& goa
     return retDist;
 }
 
+double CUpperGoalDetector::estimateAzimuthAngle(double distance, double pixelX)
+{
+    // This calculation would be a lot easier if the camera did not have such a wide field of view
+    // Up close to the goal, turning the root plus/minus 20 degrees makes the goal appear to follow a U
+    // shaped path that leaves the top of the screen 25 pixels offset from center at azimuth 25 degrees.
+    
+    double listCenterXAtDistanceInches[][2] = {
+        {195, 4*12}, {202.0, 5*12}, {210.0, 6*12}, {212.0, 7*12}, {212.0, 8*12}, {212.0, 9*12}, {212.0, 13*12}, {212.0, 16*12}, {212.0, 21*12}, {0.0, 0.0}
+    };
+   
+    double list20DegreeXAtDistanceInches[][2] = {
+        {220.0, 4*12}, {190.0, 5*12}, {180.0, 6*12}, {164.0, 7*12}, {133.0, 8*12}, {108.0, 9*12}, {164.0, 13*12}, {220.0, 16*12}, {212.0, 21*12}, {0.0, 0.0}
+    };
+    int nSamples = 8;
+    
+    int iLow=0;
+    int iHigh=0;
+    for(int i=0; i<nSamples-1; i++)
+    {
+        iLow = i;
+        iHigh = i+1;
+        if( (distance < listCenterXAtDistanceInches[i][2]) && (distance > listCenterXAtDistanceInches[i+1][2]) )
+        {
+            break;
+        }
+    }
+    double distLow = listCenterXAtDistanceInches[iLow][1];
+    double distHigh = listCenterXAtDistanceInches[iHigh][1];
+    double distDiff = listCenterXAtDistanceInches[iHigh][1] - listCenterXAtDistanceInches[iLow][1];
+    
+    double centerLow = listCenterXAtDistanceInches[iLow][2];
+    double centerHigh = listCenterXAtDistanceInches[iHigh][2];
+    double centerDiff = listCenterXAtDistanceInches[iHigh][2] - listCenterXAtDistanceInches[iLow][2];
+   
+    double deg20Low = list20DegreeXAtDistanceInches[iLow][2];
+    double deg20High = list20DegreeXAtDistanceInches[iHigh][2];
+    double deg20Diff = list20DegreeXAtDistanceInches[iLow][2] - list20DegreeXAtDistanceInches[iHigh][2];
+   
+    double partial = ((distance - distLow) / distDiff);
+    
+    double centerX = centerLow + (partial * centerDiff);
+    double pixelsPerDegree = deg20Low + (partial * deg20Diff);
+    pixelsPerDegree /= 20.0;
+    return (pixelX - centerX) * (1.0/pixelsPerDegree);  
+}
+
 void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrameGrinder)
 {
     try
@@ -282,7 +328,7 @@ bool CUpperGoalDetector::filterContours(
         
         distanceToUpperGoalInches = estimateDistanceInches(upperGoalRectangle);
 
-        upperGoalAzimuthDegrees = -1;
+        upperGoalAzimuthDegrees = estimateAzimuthAngle(distanceToUpperGoalInches, upperGoalRectangle.center.x);
     }
     return isUpperGoalFound;
 }

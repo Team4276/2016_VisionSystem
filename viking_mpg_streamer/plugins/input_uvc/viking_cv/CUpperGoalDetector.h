@@ -55,6 +55,7 @@ public:
     void init();
     void detectBlobs(CVideoFrame* pFrame, CFrameGrinder* pFrameGrinder);
     double estimateDistanceInches(const CUpperGoalRectangle& goalRect);
+    double estimateAzimuthAngle(double distance, double pixelX);
 
 private:
 
