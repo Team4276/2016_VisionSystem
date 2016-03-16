@@ -66,7 +66,8 @@ void CTargetInfo::updateTargetInfo(
         int timeLatencyThisCameraFrameMilliseconds,
         bool isUpperGoalFound,
         float upperGoalAzimuthDegrees,
-        float distanceToUpperGoalInches)
+        float distanceToUpperGoalInches,
+        float upperGoalRectangle_centerX)
 {
     init();
 
@@ -80,11 +81,13 @@ void CTargetInfo::updateTargetInfo(
     {
         m_upperGoalAzimuthDegrees = upperGoalAzimuthDegrees;
         m_distanceToUpperGoalInches = distanceToUpperGoalInches;
+        m_upperGoalRectangle_centerX = upperGoalRectangle_centerX;
     }
     else
     {
         m_upperGoalAzimuthDegrees = -999;
         m_distanceToUpperGoalInches = 999;
+        m_upperGoalRectangle_centerX = -999;
     }
 }
 
@@ -97,10 +100,11 @@ std::string CTargetInfo::initFormattedTextFromTargetInfo()
 {
     char buf[128];
     // Format text for transmission to the RoboRio
-    sprintf(buf, "%d,%d,%d",
+    sprintf(buf, "%d,%d,%d,%d",
             m_isUpperGoalFound,
             (int) (m_upperGoalAzimuthDegrees * 10),
-            (int) m_distanceToUpperGoalInches);
+            (int) m_distanceToUpperGoalInches,
+            (int) m_upperGoalRectangle_centerX);
     m_targetInfoText = buf;
     return m_targetInfoText;
 }

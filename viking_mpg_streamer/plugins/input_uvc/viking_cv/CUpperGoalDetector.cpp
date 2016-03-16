@@ -202,7 +202,7 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
 
         pFrame->m_targetInfo.updateTargetInfo(
                 timeSinceLastCameraFrameMilliseconds, timeLatencyThisCameraFrameMilliseconds, 
-                isUpperGoalFound, upperGoalAzimuthDegrees, distanceToUpperGoalInches);
+                isUpperGoalFound, upperGoalAzimuthDegrees, distanceToUpperGoalInches, upperGoalRectangle.center.x);
 
         pFrame->updateAnnotationInfo(upperGoalRectangle);
 

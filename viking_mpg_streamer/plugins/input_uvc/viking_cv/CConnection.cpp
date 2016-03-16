@@ -38,7 +38,6 @@
 
 #define SOCKET_ERROR        -1
 
-#include "CLedStrip.h"
 #include "CConnection.h"
 #include "dbgMsg.h"
 

@@ -43,7 +43,6 @@
 
 #include "../v4l2uvc.h" // this header will includes the ../../mjpg_streamer.h
 
-#include "CLedStrip.h"
 #include "CConnection.h"
 #include "CUpperGoalRectangle.h"
 #include "CTargetInfo.h"
@@ -143,18 +142,7 @@ void* listener_thread(void* pVoid)
                 bytesRead = pCtx->readClient(rcvBuffer, 1024);
                 if (bytesRead > 0)
                 {
-                    messageFromClient.initFromText(rcvBuffer, 1, (int)CLedStrip::NUMBER_OF_LED_STRIP_MODES);
-                    if (!messageFromClient.m_commandFromClient)
-                    {
-                        sMsg = "listener_thread received an unrecognized command = \"";
-                        sMsg += rcvBuffer;
-                        sMsg += "\"\n";
-                        dbgMsg_s(sMsg);
-                    }
-                    else
-                    {
-                        pCtx->m_ledStrip.setMode((CLedStrip::LED_STRIP_MODE)messageFromClient.m_commandFromClient);
-                    }
+                    // Use command data to do something...   
                 }
             }
         }
@@ -180,8 +168,6 @@ void* text_server_thread(void* pVoid)
             {
                 pFrame->m_targetInfo.initFormattedTextFromTargetInfo();
                 sMsg = pFrame->m_targetInfo.displayText();
-                sMsg += ",";
-                sMsg += static_textConnection.m_ledStrip.displayText();
                 sMsg += "\n";
                 iRet = static_textConnection.writeClient((char*) sMsg.c_str(), sMsg.size());
                 fflush(NULL);
@@ -217,7 +203,7 @@ void* browser_server_thread(void* pVoid)
     struct sockaddr_in ipRoboRio;
     memset(&ipRoboRio, 0, sizeof(struct sockaddr_in));
     ipRoboRio.sin_family = AF_INET;
-    ipRoboRio.sin_port = htons(5801);
+    ipRoboRio.sin_port = htons(5809);
     u.b[0] = 10;
     u.b[1] = 42;
     u.b[2] = 76;
@@ -274,7 +260,7 @@ void CConnectionServer::init(CFrameGrinder* pFrameGrinder)
 
     // Port 1180 is legal to use per FRC rules. The port is bidirectional but usually used to relay camera 
     // video from the cRIO to the driver station
-    static_textConnection.init(5801, (char*) "text");
+    static_textConnection.init(5809, (char*) "text");
 
     m_old_pipeHandler = signal(SIGPIPE, sigPipeHandler);
     if (m_old_pipeHandler == SIG_ERR)

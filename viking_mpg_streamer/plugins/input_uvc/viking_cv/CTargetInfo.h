@@ -50,7 +50,8 @@ public:
             int timeLatencyThisCameraFrameMilliseconds, 
             bool isUpperGoalFound,
             float upperGoalAzimuthDegrees,
-            float distanceToUpperGoalInches);
+            float distanceToUpperGoalInches,
+            float upperGoalRectangle_centerX);
 
     void initTargetInfoFromText(const std::string& targetInfoText);
 
@@ -92,9 +93,9 @@ private:
     int m_timeSinceLastCameraFrameMilliseconds;
     int m_timeLatencyThisCameraFrameMilliseconds;
     int m_isUpperGoalFound;
-    int m_upperGoalRectangle;
     float m_upperGoalAzimuthDegrees;
     float m_distanceToUpperGoalInches;
+    float m_upperGoalRectangle_centerX;
 };
 
 #endif	/* CTARGETINFO_H */
