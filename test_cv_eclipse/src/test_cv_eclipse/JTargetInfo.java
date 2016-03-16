@@ -78,16 +78,20 @@ public class JTargetInfo {
     
     public void initTargetInfoFromText(String txt) {
         String[] items = txt.split(",");
-        Integer iTemp = Integer.parseInt(items[0]);
-        setIsUpperGoalFound(iTemp != 0);
-        
-        iTemp = Integer.parseInt(items[1]);
-        setAngleFromStraightAheadToUpperGoal(iTemp);
-        
-        iTemp = Integer.parseInt(items[2]);
-		setDistanceToUpperGoal(iTemp);
-        
-        iTemp = Integer.parseInt(items[3]);
-        setPixelX(iTemp);
+        if(items.length < 4) {
+        	// Ignore initial "HTTP/1.0 200 OK" return and any other malformed packet data
+        } else {
+	        Integer iTemp = Integer.parseInt(items[0]);
+	        setIsUpperGoalFound(iTemp != 0);
+	        
+	        iTemp = Integer.parseInt(items[1]);
+	        setAngleFromStraightAheadToUpperGoal(iTemp);
+	        
+	        iTemp = Integer.parseInt(items[2]);
+			setDistanceToUpperGoal(iTemp);
+	        
+	        iTemp = Integer.parseInt(items[3]);
+	        setPixelX(iTemp);
+        }
     }
 }

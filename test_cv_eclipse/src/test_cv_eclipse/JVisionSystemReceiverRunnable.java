@@ -24,7 +24,7 @@ public class JVisionSystemReceiverRunnable implements Runnable
         while(m_continueRunning) 
         {
             textInput = m_visionSystemReceiver.getOneLineFromSocket();
-            if(textInput != null)
+            if(!textInput.isEmpty())
             {
                 Robot.g_nSequenceVisionSystem++;
                 m_visionSystemTargetInfo.initTargetInfoFromText(textInput);
@@ -35,13 +35,12 @@ public class JVisionSystemReceiverRunnable implements Runnable
                 
                 String sMsg = count++ + ") ";
                 if(Robot.g_isVisionSystemGoalDetected) {
-                	sMsg += "*** FOUND *** ";
+                	sMsg += "*** FOUND *** Vision system Pixel X = " + Robot.g_visionSystemPixelX;    // Robot.g_visionSystemAngleRobotToGoal + "deg,   " + Robot.g_visionSystemPixelX + " inches";
                 } 
                 else
                 {
-                	sMsg += "              ";
+                	sMsg += "              Upper Goal not found";
                 }
-                sMsg += Robot.g_visionSystemAngleRobotToGoal + "deg,   " + Robot.g_visionSystemPixelX + " inches";
                 System.out.println(sMsg);
                 
             }

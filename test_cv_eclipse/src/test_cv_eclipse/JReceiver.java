@@ -60,14 +60,14 @@ public class JReceiver
         m_out.println("GET");   // Tells the BeagleBone to start sending text
     }
     
-    String getOneLineFromSocket()
+	String getOneLineFromSocket()
     {
         String textInput;
         try {
             textInput = m_in.readLine();
         } catch (IOException ex) {
             Logger.getLogger(JReceiver.class.getName()).log(Level.SEVERE, null, ex);
-            textInput = null;
+			textInput = "";
         }
        return textInput;
     }
