@@ -43,7 +43,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/viking_cv/CConnectionServer.o \
 	${OBJECTDIR}/viking_cv/CFrameGrinder.o \
 	${OBJECTDIR}/viking_cv/CGpioLed.o \
-	${OBJECTDIR}/viking_cv/CLedStrip.o \
 	${OBJECTDIR}/viking_cv/CMessageFromClient.o \
 	${OBJECTDIR}/viking_cv/CTargetInfo.o \
 	${OBJECTDIR}/viking_cv/CTestMonitor.o \
@@ -117,11 +116,6 @@ ${OBJECTDIR}/viking_cv/CGpioLed.o: viking_cv/CGpioLed.cpp
 	${MKDIR} -p ${OBJECTDIR}/viking_cv
 	${RM} $@.d
 	$(COMPILE.cc) -g -DCV_DEBUG_CONNECT -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CGpioLed.o viking_cv/CGpioLed.cpp
-
-${OBJECTDIR}/viking_cv/CLedStrip.o: viking_cv/CLedStrip.cpp 
-	${MKDIR} -p ${OBJECTDIR}/viking_cv
-	${RM} $@.d
-	$(COMPILE.cc) -g -DCV_DEBUG_CONNECT -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CLedStrip.o viking_cv/CLedStrip.cpp
 
 ${OBJECTDIR}/viking_cv/CMessageFromClient.o: viking_cv/CMessageFromClient.cpp 
 	${MKDIR} -p ${OBJECTDIR}/viking_cv
