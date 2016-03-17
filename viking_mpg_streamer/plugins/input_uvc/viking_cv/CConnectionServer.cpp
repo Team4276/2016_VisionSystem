@@ -207,7 +207,7 @@ void* browser_server_thread(void* pVoid)
     u.b[0] = 10;
     u.b[1] = 42;
     u.b[2] = 76;
-    u.b[3] = 20;
+    u.b[3] = 2;
     ipRoboRio.sin_addr = u.addr;
 
     while (!g_isShutdown)
