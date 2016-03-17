@@ -25,39 +25,60 @@ public class JReceiver
     Socket m_bbbTextSocket = null;
     PrintWriter m_out = null;
     BufferedReader m_in = null;
-    Boolean m_initOK = false;
+    Boolean m_initOK = true;
 
-    void init()
+    boolean init()
     {
         try
         {
             m_currentTargetInfo = new JTargetInfo();
-            m_initOK = false;
-            m_bbbTextSocket = new Socket(m_host, 5809);
+            m_initOK = true;
+			m_bbbTextSocket = new Socket(m_host, 5809);
             m_out = new PrintWriter(m_bbbTextSocket.getOutputStream(), true);
             m_in = new BufferedReader(new InputStreamReader(m_bbbTextSocket.getInputStream()));
         } catch (UnknownHostException e)
         {
-            System.err.println("Don't know about host: " + m_host);
+            System.err.println("UnknownHostException Exception while creating connection to host: " + m_host + "\n" + e.getMessage());
             m_initOK = false;
 
-        } catch (IOException e)
+        } catch (IOException e)        
         {
-            System.err.println("Couldn't get I/O for the connection to: " + m_host);
+            System.err.println("I/O Exception while creating connection to host: " + m_host + "\n" + e.getMessage());
             m_initOK = false;
-        }
+        } catch (Exception e)        
+	    {
+	        System.err.println("Generic Exception while creating connection to host: " + m_host + "\n" + e.getMessage());
+	        m_initOK = false;
+	    } 
         if (m_out == null)
         {
-            System.err.println("OUT == null");
+        	System.err.println("Couldn't get PrintWriter for the connection to: " + m_host);
         } else if (m_in == null)
         {
-            System.err.println("IN == null");
+            System.err.println("Couldn't get BufferedReader for the connection to: " + m_host);
             m_initOK = false;
         }
-
-        m_initOK = true;
-            
-        m_out.println("GET");   // Tells the BeagleBone to start sending text
+        if(m_initOK) {
+        	m_out.println("GET");   // Tells the BeagleBone to start sending text
+        }  else {
+            if (m_currentTargetInfo != null)
+            {
+            	m_currentTargetInfo = null;
+            }
+            if (m_bbbTextSocket != null)
+            {
+            	m_bbbTextSocket = null;
+            }
+            if (m_out != null)
+            {
+            	m_out = null;
+            }
+            if (m_in != null)
+            {
+            	m_in = null;
+            }
+        }
+        return m_initOK;
     }
     
 	String getOneLineFromSocket()

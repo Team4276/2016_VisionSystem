@@ -22,7 +22,7 @@ public class JTargetInfo {
     double fnum;
     String s;
 
-    public void JTargetInfo() {
+    public JTargetInfo() {
         init();
     }
 
