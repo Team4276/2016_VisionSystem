@@ -179,7 +179,7 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         cv::inRange(img_blur, lowerBounds, upperBounds, goal_blob);
             
         iCount++;
-        //if ((iCount % 17) == 0)
+        if ((iCount % 17) == 0)
         {
             pFrameGrinder->m_testMonitor.saveFrameToJpeg(goal_blob);
         }

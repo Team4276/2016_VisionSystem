@@ -68,6 +68,7 @@ extern bool g_isShutdown;
 extern context cams[MAX_INPUT_PLUGINS];
 
 #define INPUT_PLUGIN_NAME "UVC webcam grabber"
+#define FILE_NAME_EXPOSURE "/home/ubuntu/exposure3To2047.txt"
 
 /*
  * UVC resolutions mentioned at: (at least for some webcams)
@@ -286,6 +287,7 @@ int input_init(input_parameter *param, int id)
 
 #ifndef TEST_USE_JPEGS_NOT_CAMERA
     
+    
     DBG("vdIn pn: %d\n", id);
     /* open video device and prepare data structure */
     if(init_videoIn(cams[id].videoIn, dev, width, height, fps, format, 1, cams[id].pglobal, id) < 0) {
@@ -302,6 +304,19 @@ int input_init(input_parameter *param, int id)
         initDynCtrls(cams[id].videoIn->fd);
 
     enumerateControls(cams[id].videoIn, cams[id].pglobal, id); // enumerate V4L2 controls after UVC extended mapping
+
+    int rv=0;
+    FILE* fp = fopen(FILE_NAME_EXPOSURE, "r");
+    if (fp != NULL)
+    {
+        rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=1");
+        fclose(fp);
+    }
+    else
+    {
+       rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=3");
+    }
+
 #endif   // TEST_USE_JPEGS_NOT_CAMERA
     return 0;
 }
@@ -489,6 +504,32 @@ void *cam_thread(void *arg)
             DBG("dropping too small frame, assuming it as broken\n");
             continue;
         }
+        
+        static int iCount = 0;
+        iCount++;
+        if(iCount % 20)
+        {
+            int rv=0;
+            FILE* fp = fopen(FILE_NAME_EXPOSURE, "r");
+            if (fp != NULL)
+            {
+                char buf[128] = {0};
+                char buf2[128] = {0};
+                int nRead = fread(buf, 1, 128, fp);
+                if(nRead > 0)
+                {
+                    strcpy(buf2, "v4l2-ctl -d /dev/video0 --set-ctrl exposure_absolute=");
+                    strcat(buf2, buf);
+                    rv = system(buf2);
+                    if(rv != 0)
+                    {
+                        printf("rv = %d,  %s\n", rv, buf2);
+                    }
+                }    
+                fclose(fp);
+            }
+        }
+ 
         
  #ifdef NO_CV_JUST_STREAM_THE_CAMERA
        
