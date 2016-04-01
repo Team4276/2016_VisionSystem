@@ -159,8 +159,8 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         static int iCount = 0;
  
         // Look for the green hue wee are emitting from the LED halo 
-        cv::Scalar lowerBounds = cv::Scalar(86,0,150);
-	cv::Scalar upperBounds = cv::Scalar(94,255,255);
+        cv::Scalar lowerBounds = cv::Scalar(79,0,150);
+	cv::Scalar upperBounds = cv::Scalar(90,255,255);
 
         int timeSinceLastCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
                 timeLastCameraFrame,
