@@ -160,7 +160,7 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
  
         // Look for the green hue wee are emitting from the LED halo 
         cv::Scalar lowerBounds = cv::Scalar(79,0,150);
-	cv::Scalar upperBounds = cv::Scalar(90,255,255);
+	cv::Scalar upperBounds = cv::Scalar(90,255,210);
 
         int timeSinceLastCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
                 timeLastCameraFrame,
@@ -294,7 +294,7 @@ bool CUpperGoalDetector::filterContours(
                         //
                         // So... we look for a dent in the surrounding countour that is more than half the height
                         double depth = convexityDefectsSet[j][3]/256.0;
-                        printf("w,h [%f,%f]   convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", tempRect.size.width, tempRect.size.height, j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
+                        //printf("w,h [%f,%f]   convexityDefectsSet[%d] (depth) = [ %d %d %d %d ]  (%f) \n", tempRect.size.width, tempRect.size.height, j, convexityDefectsSet[j][0], convexityDefectsSet[j][1], convexityDefectsSet[j][2], convexityDefectsSet[j][3], depth);
                         if(depth > (shorterSide/2))
                         {
                             // Contour is concave (hoping for a "U")
@@ -304,7 +304,7 @@ bool CUpperGoalDetector::filterContours(
                     if(bFound) 
                     {
                         area = (float)tempRect.size.width * (float)tempRect.size.height;
-                        printf(" *** FOUND ***   area1 %f  w,h,a,d = %f\t%f\t%f\n", area, tempRect.size.width, tempRect.size.height, aspect);
+                        //printf(" *** FOUND ***   area1 %f  w,h,a,d = %f\t%f\t%f\n", area, tempRect.size.width, tempRect.size.height, aspect);
                         listFilteredRect.push_back(tempRect);                    
                     }
                 }
@@ -324,7 +324,7 @@ bool CUpperGoalDetector::filterContours(
             }
         }
         area = (float)upperGoalRectangle.size.width * (float)upperGoalRectangle.size.height;
-        printf("goal (x, y) area  (%f, %f) %f", upperGoalRectangle.center.x, upperGoalRectangle.center.y, area);
+        //printf("goal (x, y) area  (%f, %f) %f", upperGoalRectangle.center.x, upperGoalRectangle.center.y, area);
         
         distanceToUpperGoalInches = estimateDistanceInches(upperGoalRectangle);
 
