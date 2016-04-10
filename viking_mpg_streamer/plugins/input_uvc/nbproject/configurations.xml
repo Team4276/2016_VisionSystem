@@ -9,6 +9,7 @@
       <itemPath>viking_cv/CFrameGrinder.h</itemPath>
       <itemPath>viking_cv/CGpioLed.h</itemPath>
       <itemPath>viking_cv/CMessageFromClient.h</itemPath>
+      <itemPath>viking_cv/CSettings.h</itemPath>
       <itemPath>viking_cv/CTargetInfo.h</itemPath>
       <itemPath>viking_cv/CTestMonitor.h</itemPath>
       <itemPath>viking_cv/CVideoFrame.h</itemPath>
@@ -34,6 +35,7 @@
       <itemPath>viking_cv/CFrameGrinder.cpp</itemPath>
       <itemPath>viking_cv/CGpioLed.cpp</itemPath>
       <itemPath>viking_cv/CMessageFromClient.cpp</itemPath>
+      <itemPath>viking_cv/CSettings.cpp</itemPath>
       <itemPath>viking_cv/CTargetInfo.cpp</itemPath>
       <itemPath>viking_cv/CTestMonitor.cpp</itemPath>
       <itemPath>viking_cv/CUpperGoalDetector.cpp</itemPath>
@@ -131,6 +133,10 @@
       <item path="viking_cv/CMessageFromClient.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="viking_cv/CMessageFromClient.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="viking_cv/CSettings.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="viking_cv/CSettings.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="viking_cv/CTargetInfo.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -239,6 +245,10 @@
       <item path="viking_cv/CMessageFromClient.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="viking_cv/CMessageFromClient.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="viking_cv/CSettings.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="viking_cv/CSettings.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="viking_cv/CTargetInfo.cpp" ex="false" tool="1" flavor2="0">
       </item>

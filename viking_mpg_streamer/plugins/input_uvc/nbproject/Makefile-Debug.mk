@@ -44,6 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/viking_cv/CFrameGrinder.o \
 	${OBJECTDIR}/viking_cv/CGpioLed.o \
 	${OBJECTDIR}/viking_cv/CMessageFromClient.o \
+	${OBJECTDIR}/viking_cv/CSettings.o \
 	${OBJECTDIR}/viking_cv/CTargetInfo.o \
 	${OBJECTDIR}/viking_cv/CTestMonitor.o \
 	${OBJECTDIR}/viking_cv/CUpperGoalDetector.o \
@@ -121,6 +122,11 @@ ${OBJECTDIR}/viking_cv/CMessageFromClient.o: viking_cv/CMessageFromClient.cpp
 	${MKDIR} -p ${OBJECTDIR}/viking_cv
 	${RM} $@.d
 	$(COMPILE.cc) -g -DCV_DEBUG_CONNECT -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CMessageFromClient.o viking_cv/CMessageFromClient.cpp
+
+${OBJECTDIR}/viking_cv/CSettings.o: viking_cv/CSettings.cpp 
+	${MKDIR} -p ${OBJECTDIR}/viking_cv
+	${RM} $@.d
+	$(COMPILE.cc) -g -DCV_DEBUG_CONNECT -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CSettings.o viking_cv/CSettings.cpp
 
 ${OBJECTDIR}/viking_cv/CTargetInfo.o: viking_cv/CTargetInfo.cpp 
 	${MKDIR} -p ${OBJECTDIR}/viking_cv

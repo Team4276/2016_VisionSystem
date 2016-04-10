@@ -58,9 +58,12 @@
 #include "viking_cv/CUpperGoalDetector.h"
 #include "viking_cv/CTestMonitor.h"
 #include "viking_cv/CFrameGrinder.h"
+#include "viking_cv/CSettings.h"
 #include "viking_cv/dbgMsg.h"
 
 CFrameGrinder frameGrinder;
+extern CSettings g_settings;
+
 
 // Global shutdown flag is set when user typed Ctrl-C
 extern bool g_isShutdown;
@@ -305,16 +308,15 @@ int input_init(input_parameter *param, int id)
 
     enumerateControls(cams[id].videoIn, cams[id].pglobal, id); // enumerate V4L2 controls after UVC extended mapping
 
-    int rv=0;
-    FILE* fp = fopen(FILE_NAME_EXPOSURE, "r");
-    if (fp != NULL)
+    int rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=3");
+
+    char buf[128] = {0};
+    strcpy(buf, "v4l2-ctl -d /dev/video0 --set-ctrl exposure_absolute=");
+    strcat(buf, g_settings.getSettingText(CSettings::SETTING_EXPOSURE).c_str());
+    rv = system(buf);
+    if(rv != 0)
     {
-        rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=1");
-        fclose(fp);
-    }
-    else
-    {
-       rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=3");
+        printf("rv = %d,  %s\n", rv, buf);
     }
 
 #endif   // TEST_USE_JPEGS_NOT_CAMERA
@@ -505,31 +507,17 @@ void *cam_thread(void *arg)
             continue;
         }
         
-        static int iCount = 0;
-        iCount++;
-        if(iCount % 20)
+        if(g_settings.isDynamicSettingsEnabled())
         {
-            int rv=0;
-            FILE* fp = fopen(FILE_NAME_EXPOSURE, "r");
-            if (fp != NULL)
+            char buf2[128] = {0};
+            strcpy(buf2, "v4l2-ctl -d /dev/video0 --set-ctrl exposure_absolute=");
+            strcat(buf2, g_settings.getSettingText(CSettings::SETTING_EXPOSURE).c_str());
+            int rv2 = system(buf2);
+            if(rv2 != 0)
             {
-                char buf[128] = {0};
-                char buf2[128] = {0};
-                int nRead = fread(buf, 1, 128, fp);
-                if(nRead > 0)
-                {
-                    strcpy(buf2, "v4l2-ctl -d /dev/video0 --set-ctrl exposure_absolute=");
-                    strcat(buf2, buf);
-                    rv = system(buf2);
-                    if(rv != 0)
-                    {
-                        printf("rv = %d,  %s\n", rv, buf2);
-                    }
-                }    
-                fclose(fp);
+                printf("rv2 = %d,  %s\n", rv2, buf2);
             }
         }
- 
         
  #ifdef NO_CV_JUST_STREAM_THE_CAMERA
        
