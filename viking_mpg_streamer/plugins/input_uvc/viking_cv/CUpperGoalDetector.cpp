@@ -155,7 +155,7 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
     {
         static struct timespec timeLastCameraFrame = {0};
         static struct timespec timeNow = {0};
-        cv::Mat img_hsv, img_blur, goal_blob;
+        cv::Mat img_hsv, img_blur;
         static int iCount = 0;
  
         // Look for the green hue wee are emitting from the LED halo 
@@ -176,17 +176,17 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         cv::GaussianBlur(img_hsv, img_blur, cv::Size(5,5),1.5);
 
         // Find the bright response from the retro-reflective tape
-        cv::inRange(img_blur, lowerBounds, upperBounds, goal_blob);
+        cv::inRange(img_blur, lowerBounds, upperBounds, pFrame->m_filteredFrame);
             
         iCount++;
         if ((iCount % 17) == 0)
         {
-            pFrameGrinder->m_testMonitor.saveFrameToJpeg(goal_blob);
+            pFrameGrinder->m_testMonitor.saveFrameToJpeg(pFrame->m_filteredFrame);
         }
 
         //Find the contours. Use the contourOutput Mat so the original image doesn't get overwritten
         cv::vector<std::vector<cv::Point> > goalContours;
-        cv::findContours(goal_blob, goalContours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+        cv::findContours(pFrame->m_filteredFrame, goalContours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
         
         CUpperGoalRectangle upperGoalRectangle;
         float upperGoalAzimuthDegrees = 0.0;

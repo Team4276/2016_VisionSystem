@@ -36,6 +36,8 @@
 #include "CTargetInfo.h"
 #include "CVideoFrame.h"
 #include "dbgMsg.h"
+#include "CSetting.h"
+#include "CSettingList.h"
 
 CVideoFrame::CVideoFrame()
 {
@@ -84,16 +86,3 @@ void CVideoFrame::annotate()
         cv::line(m_frame, pt8, m_upperGoalRectangle.center, colorYellow, 3, 4, 0);
     }
 }
-
-void CVideoFrame::compress()
-{
-    m_outbuf.clear();
-    m_params.clear();
-    m_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-    m_params.push_back(8);
-    if (!cv::imencode(".jpg", m_frame, m_outbuf, m_params))
-    {
-        dbgMsg_s("Failed to encode frame to JPG format\n");
-    }
-}
-

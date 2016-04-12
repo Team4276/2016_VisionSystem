@@ -54,6 +54,8 @@
 #include "CTestMonitor.h"
 #include "CFrameGrinder.h"
 #include "CMessageFromClient.h"
+#include "CSetting.h"
+#include "CSettingList.h"
 #include "dbgMsg.h"
 
 // Global shutdown flag is set when user typed Ctrl-C
@@ -61,6 +63,7 @@ bool g_isShutdown = false;
 
 extern globals *pglobal;
 extern context cams[MAX_INPUT_PLUGINS];
+extern CSettingList g_settings;
 
 static CBrowserConnection static_browserConnection;
 static CTextConnection static_textConnection;
@@ -187,7 +190,7 @@ void* browser_server_thread(void* pVoid)
     CFrameGrinder* pFrameGrinder = (CFrameGrinder*) pVoid;
     CVideoFrame* pFrame = 0;
     std::string sTemp;
- 
+    
     std::vector<unsigned char> buf;
     std::vector<int> qualityType;
     qualityType.push_back(CV_IMWRITE_JPEG_QUALITY);
@@ -227,7 +230,14 @@ void* browser_server_thread(void* pVoid)
             {
                 pFrameGrinder->m_testMonitor.saveFrameToJpeg(pFrame->m_frame);
             }
-            cv::imencode(".jpg", pFrame->m_frame, buf, qualityType);  
+            if(g_settings.getSetting(CSetting::SETTING_ENABLE_STREAM_FILTER_IMAGE) != 0)
+            {
+                cv::imencode(".jpg", pFrame->m_filteredFrame, buf, qualityType);  
+            }
+            else
+            {
+                cv::imencode(".jpg", pFrame->m_frame, buf, qualityType);  
+            }
 
             DBG("copying frame from input: %d\n", (int)pcontext->id);
             pglobal->in[pcontext->id].size = memcpy_picture(pglobal->in[pcontext->id].buf, buf.data(), buf.size());

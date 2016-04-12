@@ -54,9 +54,9 @@ public:
     void updateAnnotationInfo(
             const CUpperGoalRectangle& upperGoalRectangle);
     void annotate();
-    void compress();
 
     cv::Mat m_frame;
+    cv::Mat m_filteredFrame;
     CTargetInfo m_targetInfo;
 
     CUpperGoalRectangle m_upperGoalRectangle;

@@ -44,7 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/viking_cv/CFrameGrinder.o \
 	${OBJECTDIR}/viking_cv/CGpioLed.o \
 	${OBJECTDIR}/viking_cv/CMessageFromClient.o \
-	${OBJECTDIR}/viking_cv/CSettings.o \
+	${OBJECTDIR}/viking_cv/CSettingList.o \
 	${OBJECTDIR}/viking_cv/CTargetInfo.o \
 	${OBJECTDIR}/viking_cv/CTestMonitor.o \
 	${OBJECTDIR}/viking_cv/CUpperGoalDetector.o \
@@ -123,10 +123,10 @@ ${OBJECTDIR}/viking_cv/CMessageFromClient.o: viking_cv/CMessageFromClient.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CMessageFromClient.o viking_cv/CMessageFromClient.cpp
 
-${OBJECTDIR}/viking_cv/CSettings.o: viking_cv/CSettings.cpp 
+${OBJECTDIR}/viking_cv/CSettingList.o: viking_cv/CSettingList.cpp 
 	${MKDIR} -p ${OBJECTDIR}/viking_cv
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CSettings.o viking_cv/CSettings.cpp
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/viking_cv/CSettingList.o viking_cv/CSettingList.cpp
 
 ${OBJECTDIR}/viking_cv/CTargetInfo.o: viking_cv/CTargetInfo.cpp 
 	${MKDIR} -p ${OBJECTDIR}/viking_cv

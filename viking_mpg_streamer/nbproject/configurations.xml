@@ -8,7 +8,6 @@
       <itemPath>plugins/input_uvc/viking_cv/CConnectionServer.h</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CFrameGrinder.h</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CGpioLed.h</itemPath>
-      <itemPath>plugins/input_uvc/viking_cv/CLedStrip.h</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CMessageFromClient.h</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CTargetInfo.h</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CTestMonitor.h</itemPath>
@@ -41,7 +40,6 @@
       <itemPath>plugins/input_uvc/viking_cv/CConnectionServer.cpp</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CFrameGrinder.cpp</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CGpioLed.cpp</itemPath>
-      <itemPath>plugins/input_uvc/viking_cv/CLedStrip.cpp</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CMessageFromClient.cpp</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CTargetInfo.cpp</itemPath>
       <itemPath>plugins/input_uvc/viking_cv/CTestMonitor.cpp</itemPath>
