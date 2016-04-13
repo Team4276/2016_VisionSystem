@@ -389,15 +389,15 @@ extern "C" {
         
         g_settings.init();
 
-        int rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=3");
-
+        int rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=1");
+ 
         char buf[128] = {0};
         strcpy(buf, "v4l2-ctl -d /dev/video0 --set-ctrl exposure_absolute=");
         strcat(buf, g_settings.getSettingText(CSetting::SETTING_EXPOSURE).c_str());
         rv = system(buf);
-        if (rv != 0) {
+        //if (rv != 0) {
             printf("rv = %d,  %s\n", rv, buf);
-        }
+        //}
 
         CVideoFrame* pFrame = NULL;
 
@@ -485,7 +485,7 @@ extern "C" {
                 strcat(buf2, g_settings.getSettingText(CSetting::SETTING_EXPOSURE).c_str());
                 int rv2 = system(buf2);
                 if (rv2 != 0) {
-                    //printf("rv2 = %d,  %s\n", rv2, buf2);
+                    printf("rv2 = %d,  %s\n", rv2, buf2);
                 }
            }
 
