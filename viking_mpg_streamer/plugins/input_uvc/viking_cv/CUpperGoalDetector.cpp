@@ -49,6 +49,10 @@
 #include "CFrameGrinder.h"
 #include "dbgMsg.h"
 #include "viking_cv_version.h"
+#include "CSetting.h"
+#include "CSettingList.h"
+
+extern CSettingList g_settings;
 
 CUpperGoalDetector::CUpperGoalDetector()
 {
@@ -153,15 +157,24 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
 {
     try
     {
+        static bool isFirstTime = true;
         static struct timespec timeLastCameraFrame = {0};
         static struct timespec timeNow = {0};
+        static cv::Scalar lowerBounds = cv::Scalar(79,0,150);
+	static cv::Scalar upperBounds = cv::Scalar(90,255,250);
+      
+        
         cv::Mat img_hsv, img_blur;
         static int iCount = 0;
  
         // Look for the green hue wee are emitting from the LED halo 
-        cv::Scalar lowerBounds = cv::Scalar(79,0,150);
-	cv::Scalar upperBounds = cv::Scalar(90,255,250);
-
+        if(isFirstTime || g_settings.isDynamicSettingsEnabled())
+        {
+            isFirstTime = false;
+            lowerBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_LOWER_BOUND),0,150);
+            upperBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_UPPER_BOUND),255,250);
+        }
+        
         int timeSinceLastCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
                 timeLastCameraFrame,
                 pFrame->m_timeAddedToQueue[(int) CVideoFrame::FRAME_QUEUE_WAIT_FOR_BLOB_DETECT]);

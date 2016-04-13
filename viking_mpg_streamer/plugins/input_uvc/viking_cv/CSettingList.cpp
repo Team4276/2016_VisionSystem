@@ -58,7 +58,7 @@ void CSettingList::init()
         {CSetting::SETTING_EXPOSURE,                   "exposureZeroTo2047.txt",          260},
         {CSetting::SETTING_ENABLE_STREAM_FILTER_IMAGE, "enableStreamFilterImage.txt",       0},
         {CSetting::SETTING_FILTER_HUE_LOWER_BOUND,     "filterHueLowerBoundZeroTo255.txt", 79},
-        {CSetting::SETTING_FILTER_HUE_UPPER_BOUND,     "filterHueUpperBoundZeroTo255.txt", 90},
+        {CSetting::SETTING_FILTER_HUE_UPPER_BOUND,     "filterHueUpperBoundZeroTo255.txt", 96},
         {CSetting::SETTING_TYPE_UNKNOWN, "", 0},
     };
     const CSetting::INIT_SETTINGS* pInit = initSettings;
@@ -92,6 +92,9 @@ void CSettingList::init()
                 sprintf(buf, "%d", m_settings[i].m_value);
                 fwrite(buf, 1, strlen(buf), fp);
                 fclose(fp);
+                std::string sCmd = "chmod 777 ";
+                sCmd += sPath;
+                int rv = system(sCmd.c_str());
             }
         }
         i++;
