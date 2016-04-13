@@ -485,9 +485,9 @@ extern "C" {
                 strcat(buf2, g_settings.getSettingText(CSetting::SETTING_EXPOSURE).c_str());
                 int rv2 = system(buf2);
                 if (rv2 != 0) {
-                    printf("rv2 = %d,  %s\n", rv2, buf2);
+                    //printf("rv2 = %d,  %s\n", rv2, buf2);
                 }
-            }
+           }
 
 #ifdef NO_CV_JUST_STREAM_THE_CAMERA
 
