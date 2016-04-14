@@ -58,16 +58,42 @@ public:
         m_settingType = ini.settingType;
         m_defaultValue = ini.defaultValue;
         m_value = m_defaultValue;
+        m_isValueChanged = true;  // Will get set at least once, even if default value
         if( (ini.name != NULL) && (*ini.name != 0) )
         {
             m_name = (char*) ini.name;
         }
     }
-
+    
+    SETTING_TYPE settingType() const {return m_settingType;}
+    int value() const {return m_value;}
+    std::string name() const {return m_name;}
+    
+    void setValue(int val)
+    {
+        if(val != m_value)
+        {
+            m_value = val;
+            m_isValueChanged = true;
+        }
+    }
+    
+    bool isValueChanged() 
+    {
+        if(m_isValueChanged)
+        {
+            m_isValueChanged = false;
+            return true;
+        }
+        return false;
+    }
+    
+private:
     SETTING_TYPE m_settingType;
     std::string m_name;
     int m_defaultValue;
     int m_value;
+    bool m_isValueChanged;
 };
 
 #endif	/* CSETTING_H */

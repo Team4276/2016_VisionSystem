@@ -40,6 +40,7 @@ public:
 
     void init();
     bool isDynamicSettingsEnabled() const;
+    bool isValueChanged(CSetting::SETTING_TYPE typ);
     std::string getSettingText(CSetting::SETTING_TYPE typ);
     int getSetting(CSetting::SETTING_TYPE typ);
     bool isSettingFileExist(CSetting::SETTING_TYPE typ) const;

@@ -71,17 +71,17 @@ void CSettingList::init()
     m_settings[i++].init(*pInit);
     
     i = 0;
-    while(m_settings[i].m_settingType != CSetting::SETTING_TYPE_UNKNOWN)
+    while(m_settings[i].settingType() != CSetting::SETTING_TYPE_UNKNOWN)
     {
-        int iTemp = getValueFromFile(m_settings[i].m_settingType);
+        int iTemp = getValueFromFile(m_settings[i].settingType());
         if (iTemp != -1)
         {
-            m_settings[i].m_value = iTemp;
+            m_settings[i].setValue(iTemp);
         }
-        if (!isSettingFileExist(m_settings[i].m_settingType))
+        if (!isSettingFileExist(m_settings[i].settingType()))
         {
             std::string sPath = BASE_DIR;
-            sPath += m_settings[i].m_name;
+            sPath += m_settings[i].name();
             FILE* fp = fopen(sPath.c_str(), "w");
             if (fp == NULL)
             {
@@ -89,7 +89,7 @@ void CSettingList::init()
             }
             else
             {
-                sprintf(buf, "%d", m_settings[i].m_value);
+                sprintf(buf, "%d", m_settings[i].value());
                 fwrite(buf, 1, strlen(buf), fp);
                 fclose(fp);
                 std::string sCmd = "chmod 777 ";
@@ -104,7 +104,7 @@ void CSettingList::init()
 bool CSettingList::isDynamicSettingsEnabled() const
 {
     static int iCount = 0;
-    if (m_settings[CSetting::SETTING_ENABLE_DYNAMIC_SETTINGS].m_value != 0)
+    if (m_settings[CSetting::SETTING_ENABLE_DYNAMIC_SETTINGS].value() != 0)
     {
         iCount++;
         if (iCount % 20)
@@ -113,6 +113,11 @@ bool CSettingList::isDynamicSettingsEnabled() const
         }
     }
     return false;
+}
+    
+bool CSettingList::isValueChanged(CSetting::SETTING_TYPE typ)
+{
+    return m_settings[typ].isValueChanged();
 }
 
 std::string CSettingList::getSettingText(CSetting::SETTING_TYPE typ)
@@ -130,15 +135,15 @@ int CSettingList::getSetting(CSetting::SETTING_TYPE typ)
     }
     else
     {
-        m_settings[typ].m_value = getValueFromFile(typ);
+        m_settings[typ].setValue(getValueFromFile(typ));
     }
-    return m_settings[typ].m_value;
+    return m_settings[typ].value();
 }
 
 bool CSettingList::isSettingFileExist(CSetting::SETTING_TYPE typ) const
 {
     std::string sPath = BASE_DIR;
-    sPath += m_settings[typ].m_name;
+    sPath += m_settings[typ].name();
     return (access(sPath.c_str(), F_OK) != -1);
 }
 
@@ -148,7 +153,7 @@ int CSettingList::getValueFromFile(CSetting::SETTING_TYPE typ) const
     if (isSettingFileExist(typ))
     {
         std::string sPath = BASE_DIR;
-        sPath += m_settings[typ].m_name;
+        sPath += m_settings[typ].name();
         FILE* fp = fopen(sPath.c_str(), "r");
         if (fp == NULL)
         {

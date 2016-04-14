@@ -157,23 +157,13 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
 {
     try
     {
-        static bool isFirstTime = true;
         static struct timespec timeLastCameraFrame = {0};
         static struct timespec timeNow = {0};
         static cv::Scalar lowerBounds = cv::Scalar(79,0,150);
-	static cv::Scalar upperBounds = cv::Scalar(90,255,250);
-      
+	static cv::Scalar upperBounds = cv::Scalar(96,255,250);
         
         cv::Mat img_hsv, img_blur, goal_blob;
         static int iCount = 0;
- 
-        // Look for the green hue wee are emitting from the LED halo 
-        if(isFirstTime || g_settings.isDynamicSettingsEnabled())
-        {
-            isFirstTime = false;
-            lowerBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_LOWER_BOUND),0,150);
-            upperBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_UPPER_BOUND),255,250);
-        }
         
         int timeSinceLastCameraFrameMilliseconds = (int) CTestMonitor::getDeltaTimeMilliseconds(
                 timeLastCameraFrame,
@@ -187,6 +177,19 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
         cv::cvtColor(pFrame->m_frame, img_hsv, CV_BGR2HSV);
         
         cv::GaussianBlur(img_hsv, img_blur, cv::Size(5,5),1.5);
+
+       // Look for the green hue we are emitting from the LED halo 
+        if(g_settings.isDynamicSettingsEnabled())
+        {
+            if(g_settings.isValueChanged(CSetting::SETTING_FILTER_HUE_LOWER_BOUND))
+            {
+                lowerBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_LOWER_BOUND),0,150);
+            }
+            if(g_settings.isValueChanged(CSetting::SETTING_FILTER_HUE_UPPER_BOUND))
+            {
+                upperBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_UPPER_BOUND),255,250);
+            }
+        }
 
         // Find the bright response from the retro-reflective tape
         cv::inRange(img_blur, lowerBounds, upperBounds, goal_blob);

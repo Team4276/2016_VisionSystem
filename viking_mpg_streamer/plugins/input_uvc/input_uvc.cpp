@@ -379,6 +379,22 @@ extern "C" {
         if (pglobal->in[pcontext->id].buf != NULL)
             free(pglobal->in[pcontext->id].buf);
     }
+    
+    void setCameraExposure()
+    {
+        int rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=1");
+        usleep(1000000);
+                
+        char buf2[128] = {0};
+        strcpy(buf2, "v4l2-ctl -d /dev/video0 --set-ctrl exposure_absolute=");
+        strcat(buf2, g_settings.getSettingText(CSetting::SETTING_EXPOSURE).c_str());
+        int rv2 = system(buf2);
+        usleep(1000000);
+        if (rv2 != 0) 
+        {
+            printf("rv2 = %d,  %s\n", rv2, buf2);
+        }
+    }
 
     /******************************************************************************
     Description.: this thread worker grabs a frame and copies it to the global buffer
@@ -388,17 +404,8 @@ extern "C" {
     void *cam_thread(void *arg) {
         
         g_settings.init();
-
-        int rv = system("v4l2-ctl -d /dev/video0 --set-ctrl exposure_auto=1");
- 
-        char buf[128] = {0};
-        strcpy(buf, "v4l2-ctl -d /dev/video0 --set-ctrl exposure_absolute=");
-        strcat(buf, g_settings.getSettingText(CSetting::SETTING_EXPOSURE).c_str());
-        rv = system(buf);
-        //if (rv != 0) {
-            printf("rv = %d,  %s\n", rv, buf);
-        //}
-
+        setCameraExposure();
+        
         CVideoFrame* pFrame = NULL;
 
 #ifndef TEST_USE_JPEGS_NOT_CAMERA 
@@ -479,15 +486,13 @@ extern "C" {
                 continue;
             }
 
-            if (g_settings.isDynamicSettingsEnabled()) {
-                char buf2[128] = {0};
-                strcpy(buf2, "v4l2-ctl -d /dev/video0 --set-ctrl exposure_absolute=");
-                strcat(buf2, g_settings.getSettingText(CSetting::SETTING_EXPOSURE).c_str());
-                int rv2 = system(buf2);
-                if (rv2 != 0) {
-                    printf("rv2 = %d,  %s\n", rv2, buf2);
+            if (g_settings.isDynamicSettingsEnabled())
+            {
+                if(g_settings.isValueChanged(CSetting::SETTING_EXPOSURE))
+                {
+                    setCameraExposure();
                 }
-           }
+            }
 
 #ifdef NO_CV_JUST_STREAM_THE_CAMERA
 
