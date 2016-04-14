@@ -100,6 +100,11 @@ void CSettingList::init()
         i++;
     }
 }
+    
+int CSettingList::value(CSetting::SETTING_TYPE typ) const
+{
+    return m_settings[typ].value();
+}
 
 bool CSettingList::isDynamicSettingsEnabled() const
 {
@@ -147,7 +152,7 @@ bool CSettingList::isSettingFileExist(CSetting::SETTING_TYPE typ) const
     return (access(sPath.c_str(), F_OK) != -1);
 }
 
-int CSettingList::getValueFromFile(CSetting::SETTING_TYPE typ) const
+int CSettingList::getValueFromFile(CSetting::SETTING_TYPE typ)
 {
     int iRet = -1;
     if (isSettingFileExist(typ))
@@ -166,10 +171,10 @@ int CSettingList::getValueFromFile(CSetting::SETTING_TYPE typ) const
             int nRead = fread(buf, 1, 128, fp);
             if (nRead > 0)
             {
-                iRet = atoi(buf);
+                m_settings[typ].setValue(atoi(buf));
             }
             fclose(fp);
         }
     }
-    return iRet;
+    return m_settings[typ].value();
 }

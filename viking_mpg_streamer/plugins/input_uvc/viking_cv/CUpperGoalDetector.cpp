@@ -181,14 +181,16 @@ void CUpperGoalDetector::detectBlobs(CVideoFrame * pFrame, CFrameGrinder* pFrame
        // Look for the green hue we are emitting from the LED halo 
         if(g_settings.isDynamicSettingsEnabled())
         {
-            if(g_settings.isValueChanged(CSetting::SETTING_FILTER_HUE_LOWER_BOUND))
-            {
-                lowerBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_LOWER_BOUND),0,150);
-            }
-            if(g_settings.isValueChanged(CSetting::SETTING_FILTER_HUE_UPPER_BOUND))
-            {
-                upperBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_UPPER_BOUND),255,250);
-            }
+             g_settings.getValueFromFile(CSetting::SETTING_FILTER_HUE_LOWER_BOUND);
+             g_settings.getValueFromFile(CSetting::SETTING_FILTER_HUE_UPPER_BOUND);
+        }
+        if(g_settings.isValueChanged(CSetting::SETTING_FILTER_HUE_LOWER_BOUND))
+        {
+            lowerBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_LOWER_BOUND),0,150);
+        }
+        if(g_settings.isValueChanged(CSetting::SETTING_FILTER_HUE_UPPER_BOUND))
+        {
+            upperBounds = cv::Scalar(g_settings.getSetting(CSetting::SETTING_FILTER_HUE_UPPER_BOUND),255,250);
         }
 
         // Find the bright response from the retro-reflective tape

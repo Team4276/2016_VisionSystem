@@ -39,12 +39,14 @@ public:
     virtual ~CSettingList();
 
     void init();
+    int value(CSetting::SETTING_TYPE typ) const;
+    bool isSettingFileExist(CSetting::SETTING_TYPE typ) const;
     bool isDynamicSettingsEnabled() const;
+    
     bool isValueChanged(CSetting::SETTING_TYPE typ);
     std::string getSettingText(CSetting::SETTING_TYPE typ);
     int getSetting(CSetting::SETTING_TYPE typ);
-    bool isSettingFileExist(CSetting::SETTING_TYPE typ) const;
-    int getValueFromFile(CSetting::SETTING_TYPE typ) const;
+    int getValueFromFile(CSetting::SETTING_TYPE typ);
 
 private:
     CSetting m_settings[CSetting::NUMBER_OF_SETTINGS];

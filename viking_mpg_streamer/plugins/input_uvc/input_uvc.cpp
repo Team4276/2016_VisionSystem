@@ -488,10 +488,11 @@ extern "C" {
 
             if (g_settings.isDynamicSettingsEnabled())
             {
-                if(g_settings.isValueChanged(CSetting::SETTING_EXPOSURE))
-                {
-                    setCameraExposure();
-                }
+                g_settings.getValueFromFile(CSetting::SETTING_EXPOSURE);
+            }
+            if(g_settings.isValueChanged(CSetting::SETTING_EXPOSURE))
+            {
+                setCameraExposure();
             }
 
 #ifdef NO_CV_JUST_STREAM_THE_CAMERA
